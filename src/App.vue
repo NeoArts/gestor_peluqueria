@@ -1,30 +1,82 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
+  <!-- <Sidebar />
+  <div :style="{ 'marging-left' : sidebarWidth }">
+    <router-view/>
+  </div> -->
+
+  <!-- <div  ref="target"></div>
+  <div class="sticky-menu" :class="{ sticking }">This is our sticky menu</div> -->
+
+  <Navbar />
   <router-view/>
+
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import { onMounted, ref } from 'vue';
+import Sidebar from '@/components/Sidebar/Sidebar.vue'
+import { sidebarWidth } from '@/components/Sidebar/state';
+import Navbar from './components/Navbar/Navbar.vue';
 
-nav {
-  padding: 30px;
+export default {
+  components: {Sidebar, Navbar},
+  setup(){
+    // return { sidebarWidth }
+    // const target = ref();
+    // const sticking = ref(false);
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+    // const observer = new IntersectionObserver(
+    //   ([entry]) => { 
+    //     sticking.value = !entry.isIntersecting;
+    //   },
+    //   { threshold: 0.0 }
+    // );
 
-    &.router-link-exact-active {
-      color: #42b983;
-    }
+    // onMounted(() => {
+    //   observer.observe(target.value)
+    // });
+
+    return {
+      // target,
+      // sticking
+    };
   }
 }
+</script>
+
+<style lang="scss">
+// #app {
+//   min-height: 150vh;
+// background: rgb(2,0,36);
+//   background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(69,69,69,1) 0%, rgba(0,0,0,1) 100%);
+// }
+
+#app{
+  background: rgb(2,0,36);
+  background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(69,69,69,1) 0%, rgba(0,0,0,1) 100%);
+}
+
+.sticky-menu {
+  transition: 100ms;
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  background-color: #41b883;
+  padding: 1rem;
+  height: 70px;
+}
+
+.sticky-menu.sticking {
+  transition: 150ms;
+  background-color: rgba(65,184,131,0.1);
+  box-shadow: 0px 15px 10px -15px #111;
+}
+
+// body{
+//   widows: 100vh;
+//   height: 100vh;
+//   background: rgb(2,0,36);
+// background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(69,69,69,1) 0%, rgba(0,0,0,1) 100%);
+// }
+
 </style>
