@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <body>
         Inventario
-    </div>
+    </body>
 </template>

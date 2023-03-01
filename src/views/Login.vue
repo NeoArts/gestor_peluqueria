@@ -30,11 +30,15 @@
              v-model="password">
           </div>
 
-          <button type="button" class="btn btn-success fs-4 fw-bolder fst-italic my-5 p-0" style="height: 50px; width: 250px; border-radius: 50px; margin: auto;"
+          <button type="button" class="btn btn-success fs-4 fw-bolder fst-italic mt-5 p-0" style="height: 50px; width: 250px; border-radius: 50px; margin: auto;"
            v-on:click="IniciarSesion">
             Success
           </button>
-          
+          <button type="button" class="btn btn-primary mt-3 p-0 fst-italic fw-bolder" style="height: 40px; width: 200px; border-radius: 50px; margin: auto;" 
+           v-on:click="RecuperarPassword">
+            Recuperar Contraseña
+          </button>
+
         </div>
       </div>
     </div>
@@ -70,10 +74,34 @@
              v-model="password">
           </div>
 
+          <div class="modal" tabindex="-1">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Modal title</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <p>Modal body text goes here.</p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <button type="button" class="btn btn-success fs-4 fw-bolder fst-italic mt-3 p-0" style="height: 40px; width: 200px; border-radius: 50px; margin: auto;" 
            v-on:click="IniciarSesion">
             Success
           </button>
+          <button type="button" class="btn btn-primary mt-3 p-0 fst-italic fw-bolder" style="height: 40px; width: 200px; border-radius: 50px; margin: auto;"
+           v-on:click="RecuperarPassword">
+            Recuperar Contraseña
+          </button>
+
+
 
         </div>
       </div>
@@ -85,6 +113,7 @@
 <script>
 import { useStore } from "vuex";
 import firebase from "firebase";
+import { Swal } from "sweetalert2/dist/sweetalert2";
 
 export default{
   data(){
@@ -120,6 +149,31 @@ export default{
         document.getElementById("password").type = 'password'
       }
     },
+    async RecuperarPassword(){
+      const {value: email} = await this.$swal({
+        title: 'Recuperar contraseña',
+        text: 'Ingresa tu correo para enviar el email de recuperación',
+        input: 'email',
+        inputPlaceholder: 'ejemplo@gmail.com'
+      })
+
+      if(email){
+        try{
+          await firebase
+            .auth()
+            .sendPasswordResetEmail(email)
+            .then(() => {
+              console.log("email enviado")
+            })
+          console.log(email)
+        }catch(error){
+          this.$swal({
+            icon: 'error',
+            text: error.message
+          })
+        }
+      }
+    },
     IniciarSesion: async function(){
       // console.log(this.email)
       try{
@@ -141,6 +195,19 @@ export default{
                     this.store.commit("setPhotoName", user.user.photoURL)
                   }
                 })
+
+              this.$swal({
+                title: 'Cargando...',
+                text: 'Regalanos un momento',
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                timer: 5000,
+                timerProgressBar: true,
+                didOpen: () => {
+                  this.$swal.showLoading();
+                }
+              })
+              
 
               setTimeout(() => {
                 this.$router.push("/gestor")

@@ -3,29 +3,19 @@
         <table class="table">
             <thead>
                 <tr>
-                <th scope="col">#</th>
-                <th scope="col">First</th>
-                <th scope="col">Last</th>
-                <th scope="col">Handle</th>
+                    <th scope="col">Id</th>
+                    <th scope="col">Nombres</th>
+                    <th scope="col">Apellidos</th>
+                    <th scope="col">Correo</th>
+                    <th scope="col">Acciones</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody v-for="usuario in ListaUsuarios">
                 <tr>
                 <th scope="row">1</th>
                 <td>Mark</td>
                 <td>Otto</td>
                 <td>@mdo</td>
-                </tr>
-                <tr>
-                <th scope="row">2</th>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-                </tr>
-                <tr>
-                <th scope="row">3</th>
-                <td colspan="2">Larry the Bird</td>
-                <td>@twitter</td>
                 </tr>
             </tbody>
         </table>
@@ -37,9 +27,39 @@ import firebase from 'firebase';
 import { ref } from 'vue';
 
 export default{
-    beforeMount(){},
+    beforeMount(){
+        this.usuarios()
+        this.ListaUsuarios
+    },
+    data(){
+        return{
+            usuarios: null,
+        }
+    },
     setup(){
-        const usuario = ref(null)
+        var ListaUsuarios = [];
+
+        async function usuarios(){
+            var lista = []
+            await firebase
+                .firestore()
+                .collection("nomina")
+                .get()
+                .then((result) => {
+                    // console.log(result.docs)
+                    for(var i in result.docs){
+                        // console.log(result.docs[i].data().usuario)
+                        lista.push(result.docs[i].data().usuario)
+                    }
+                })
+            ListaUsuarios = lista
+            // console.log(ListaUsuarios)
+        }
+
+        return{
+            usuarios,
+            ListaUsuarios,
+        }
     }
 }
 </script>
