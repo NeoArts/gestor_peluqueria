@@ -107,7 +107,7 @@ export default{
         cerrarSesion(){
             this.store.commit("setAuthenticated", false)
             this.store.commit("setUser", null)
-            this.store.commit("setId", null)
+            this.store.commit("setPhotoName", null)
             this.$router.push("/")
         },
     },

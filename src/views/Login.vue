@@ -113,7 +113,6 @@
 <script>
 import { useStore } from "vuex";
 import firebase from "firebase";
-import { Swal } from "sweetalert2/dist/sweetalert2";
 
 export default{
   data(){

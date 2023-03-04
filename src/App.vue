@@ -47,7 +47,7 @@ export default {
 <style lang="scss">
 // #app {
 //   min-height: 150vh;
-// background: rgb(2,0,36);
+//   background: rgb(2,0,36);
 //   background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(69,69,69,1) 0%, rgba(0,0,0,1) 100%);
 // }
 
@@ -72,11 +72,9 @@ export default {
   box-shadow: 0px 15px 10px -15px #111;
 }
 
-// body{
-//   widows: 100vh;
-//   height: 100vh;
-//   background: rgb(2,0,36);
-// background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(69,69,69,1) 0%, rgba(0,0,0,1) 100%);
-// }
+body{
+  background: rgb(2,0,36);
+  background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(69,69,69,1) 0%, rgba(0,0,0,1) 100%);
+}
 
 </style>

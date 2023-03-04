@@ -63,7 +63,7 @@ export default {
         this.$swal({
           icon: 'error',
           title: 'Tenemos un problema',
-          text: 'Ha ocurrido un problema lo sentimos',
+          text: 'Ha ocurrido un problema, lo sentimos',
           confirmButtonText: 'Volver'
         }).then(() => {
           this.$router.push("/")
@@ -91,6 +91,7 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.onResize)
+    this.closeInterval()
   },
 
   data(){
@@ -105,25 +106,32 @@ export default {
     onResize(){
       this.pantallaGrande = ((window.innerWidth<1000) ? false : true)
       if(this.urlPhoto){
-        this.setPhoto(this.urlPhoto);
+        this.setPhoto();
       }
     },
   },
 
   setup(){
     const store = useStore()
-    const interval = null;
 
-    function setPhoto(urlPhoto){
-      interval = setInterval(() => {
-        const img = document.getElementById("myimg")
-        img.setAttribute('src', urlPhoto)
-      },100)
+    function setPhoto(){
+      if(this.store.state.photoName !== null){
+        firebase
+          .storage()
+          .ref()
+          .child(this.store.state.photoName)
+          .getDownloadURL()
+          .then(url => {
+            const img = document.getElementById("myimg")
+            this.urlPhoto = url
+            img.setAttribute('src', url)
+          })
+      }
     }
 
     return{
       store,
-      setPhoto
+      setPhoto,
     }
   }
 }
