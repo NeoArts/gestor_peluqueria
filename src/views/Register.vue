@@ -472,16 +472,16 @@
       if(this.store.state.isAuthenticated && this.store.state.user.rol === "admin"){
         this.isAdmin = true;
       }
-      // else{
-      //   this.$swal({
-      //     icon: 'error',
-      //     title: 'Tenemos un problema',
-      //     text: 'Ha ocurrido un problema, lo sentimos',
-      //     confirmButtonText: 'Volver'
-      //   }).then(() => {
-      //     this.$router.push("/")
-      //   })
-      // }
+      else{
+        this.$swal({
+          icon: 'error',
+          title: 'Tenemos un problema',
+          text: 'Ha ocurrido un problema, lo sentimos',
+          confirmButtonText: 'Volver'
+        }).then(() => {
+          this.$router.push("/")
+        })
+      }
     },
     setup(){
       const store = useStore();
@@ -525,7 +525,7 @@
         image: null,
         iconImage: '../assets/icono.png',
         pantallaGrande: ((window.innerWidth<1000) ? false : true),
-        isAdmin: true,
+        isAdmin: false,
       };
     },    
     mounted(){
