@@ -12,7 +12,7 @@
              class="form-control" 
              aria-describedby="basic-addon1" 
              style="border-top-right-radius: 10px; border-bottom-right-radius: 10px;"
-             maxlength="30"
+             maxlength="40"
              v-model="email">
           </div>
 
@@ -26,7 +26,7 @@
              class="form-control"
              aria-describedby="basic-addon1" 
              style="border-top-right-radius: 10px; border-bottom-right-radius: 10px;"
-             maxlength="30"
+             maxlength="40"
              v-model="password">
           </div>
 
@@ -56,7 +56,7 @@
              class="form-control" 
              aria-describedby="basic-addon1" 
              style="border-top-right-radius: 10px; border-bottom-right-radius: 10px;"
-             maxlength="30"
+             maxlength="40"
              v-model="email">
           </div>
 
@@ -70,7 +70,7 @@
              class="form-control"
              aria-describedby="basic-addon1" 
              style="border-top-right-radius: 10px; border-bottom-right-radius: 10px;"
-             maxlength="30"
+             maxlength="40"
              v-model="password">
           </div>
 
