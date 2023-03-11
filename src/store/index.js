@@ -4,7 +4,8 @@ export default createStore({
     state: {
         isAuthenticated: false,
         user: null,
-        photoName: null
+        photoName: null,
+        InvComponents: 0,
     },
     mutations: {
         setAuthenticated(state, value){

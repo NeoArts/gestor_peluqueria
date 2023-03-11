@@ -177,13 +177,13 @@ export default {
     border-top-right-radius: 20%;
     border-top-left-radius: 20%;
     background-color: rgb(199, 199, 199);
-    color: aliceblue;
+    color: black;
   }
   .link_pg:hover{
     background-color: rgb(136, 136, 136);
+    color: black;
   }
   .link_pg_activo{
     background-color: white;
-    color: black;
   }
 </style>

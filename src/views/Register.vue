@@ -77,6 +77,7 @@
                   type="text"
                   class="form-control border-0 formato-inputs"
                   pattern="\d*"
+                  maxlength="30"
                   v-model="empleado.NoIdentificacion"/>
                 </div>
 
@@ -122,10 +123,11 @@
                   maxlength="15"
                   v-model="empleado.celular"/>
                 </div>
-                <div class="p-1 border mx-2 caja">
+                <div class="p-1 border mx-2 caja" style="width: 300px;">
                   <h6 class="border-bottom">Correo Electrónico</h6>
                   <input 
                   type="text" 
+                  style="width: 290px;"
                   placeholder="ejemplo@gmail.com" 
                   class="form-control border-0 formato-inputs" 
                   maxlength="40"
@@ -176,10 +178,11 @@
                   maxlength="15"
                   v-model="contacto.numero"/>
                 </div>
-                <div class="p-1 border mx-2 caja">
+                <div class="p-1 border mx-2 caja" style="width: 300px;">
                   <h6 class="border-bottom">Correo Electrónico</h6>
                   <input 
                   type="text" 
+                  style="width: 290px;"
                   placeholder="ejemplo@gmail.com" 
                   class="form-control border-0 formato-inputs" 
                   maxlength="40"
@@ -595,7 +598,7 @@
                       <p class="my-1">`+this.empleado.fechaContracion+`</p>
                     </div>
                     <div class="m-0">
-                      <p class="border-bottom fst-italic m-0">`+this.empleado.tipoIdentificacion+`</p>
+                      <p class="border-bottom fst-italic m-0 text-uppercase">`+this.empleado.tipoIdentificacion+`</p>
                       <p class="my-1">`+this.empleado.NoIdentificacion+`</p>
                     </div>
                   </div>
@@ -679,7 +682,7 @@
                     text: 'Usuario Registrado'
                   });
                 }
-                setTimeout(() =>{router.push({ path: '/login' })},2000)
+                setTimeout(() =>{router.go(-1)},2000)
               }, 2000)
               
 

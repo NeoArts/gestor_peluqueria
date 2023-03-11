@@ -27,6 +27,7 @@
              aria-describedby="basic-addon1" 
              style="border-top-right-radius: 10px; border-bottom-right-radius: 10px;"
              maxlength="40"
+             v-on:keypress.enter="IniciarSesion"
              v-model="password">
           </div>
 
@@ -34,7 +35,7 @@
            v-on:click="IniciarSesion">
             Success
           </button>
-          <button type="button" class="btn btn-primary mt-3 p-0 fst-italic fw-bolder" style="height: 40px; width: 200px; border-radius: 50px; margin: auto;" 
+          <button type="button" class="btn btn-secondary mt-3 p-0 fst-italic fw-bolder" style="height: 40px; width: 200px; border-radius: 50px; margin: auto;" 
            v-on:click="RecuperarPassword">
             Recuperar Contraseña
           </button>
@@ -71,32 +72,15 @@
              aria-describedby="basic-addon1" 
              style="border-top-right-radius: 10px; border-bottom-right-radius: 10px;"
              maxlength="40"
+             v-on:keypress.enter="IniciarSesion"
              v-model="password">
-          </div>
-
-          <div class="modal" tabindex="-1">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title">Modal title</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                  <p>Modal body text goes here.</p>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
-              </div>
-            </div>
           </div>
 
           <button type="button" class="btn btn-success fs-4 fw-bolder fst-italic mt-3 p-0" style="height: 40px; width: 200px; border-radius: 50px; margin: auto;" 
            v-on:click="IniciarSesion">
             Success
           </button>
-          <button type="button" class="btn btn-primary mt-3 p-0 fst-italic fw-bolder" style="height: 40px; width: 200px; border-radius: 50px; margin: auto;"
+          <button type="button" class="btn btn-secondary mt-3 p-0 fst-italic fw-bolder" style="height: 40px; width: 200px; border-radius: 50px; margin: auto;"
            v-on:click="RecuperarPassword">
             Recuperar Contraseña
           </button>
@@ -162,7 +146,10 @@ export default{
             .auth()
             .sendPasswordResetEmail(email)
             .then(() => {
-              console.log("email enviado")
+              this.$swal({
+                icon: 'success',
+                text: "Mensaje enviado"
+              })
             })
           console.log(email)
         }catch(error){
