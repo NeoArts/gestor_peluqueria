@@ -77,7 +77,7 @@
                 </div>
             </div>
         </div>
-        <div class="border my-4">
+        <!-- <div class="border my-4">
             <h4 class="text-center mb-4">Información de la Cuenta</h4>
             <div class="d-flex flex-wrap">
                 <div class="p-1 border mx-auto caja text-center my-1">
@@ -108,7 +108,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
         <div class="d-flex flex-wrap justify-content-start">
             <button class="btn btn-success px-3 py-1 mb-4 border ms-5" v-on:click="submitForm">
                 <h5>Guardar</h5>
@@ -215,9 +215,9 @@ export default{
         submitForm: async function(){
             var errors = "";
 
-            if(this.usuario.Password !== this.usuario.ConfPass){
-                errors = "Las contraseñas no concuerdan"
-            }
+            // if(this.usuario.Password !== this.usuario.ConfPass){
+            //     errors = "Las contraseñas no concuerdan"
+            // }
 
             if(!this.isCorreo(this.cliente.correo)){
                 errors = "El formato del correo es no es válido"
@@ -225,7 +225,7 @@ export default{
 
             if(this.cliente.documento === "" || this.cliente.nombres === "" || this.cliente.apellidos === "" ||
             this.cliente.edad === "" || this.cliente.genero === null || this.cliente.telefono === "" ||
-            this.cliente.correo === "" || this.usuario.Password === "" || this.usuario.ConfPass === ""){
+            this.cliente.correo === "" ){
                 errors = "Revisa el formulario, no debe haber campos vacios"
             }
             console.log(errors)
@@ -245,8 +245,9 @@ export default{
                     }
                 })
 
-                this.registrarCliente(this.cliente.correo, this.usuario.Password)
-                setTimeout(()=>{this.registrarUsuario(this.cliente)},2000)                
+                // this.registrarCliente(this.cliente.correo, this.usuario.Password)
+                // setTimeout(()=>{},2000)             
+                this.registrarUsuario(this.cliente)   
                 // 
             }
         },
@@ -295,7 +296,7 @@ export default{
                 await firebase
                     .firestore()
                     .collection("clientes")
-                    .doc(usuario.uid)
+                    .doc(usuario.documento)
                     .set({usuario})
                     .then(() => {
                         this.$swal.close()

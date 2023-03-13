@@ -209,7 +209,7 @@ export default{
                 await firebase
                     .firestore()
                     .collection("clientes")
-                    .doc(this.cliente.uid)
+                    .doc(this.cliente.documento)
                     .delete()
                     .then(() => {
                         this.$swal.close();
@@ -228,7 +228,7 @@ export default{
                 await firebase
                     .firestore()
                     .collection("clientes")
-                    .doc(usuario.uid)
+                    .doc(usuario.documento)
                     .set({usuario})
                     .then(() => {
                         this.$swal.close()
