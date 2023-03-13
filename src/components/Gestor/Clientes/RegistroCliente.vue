@@ -67,6 +67,14 @@
                     v-on:keyup="format(3)" />
                 </div>
 
+                <div class="p-1 border mx-auto caja text-center my-1">
+                    <h6 class="border-bottom">Fecha de Nacimiento</h6>
+                    <input type="date"
+                     class="form-control border-0 mt-0"
+                     id="startDate"
+                     v-model="cliente.fechaNacimiento"/>
+                </div>
+
                 <div class="p-1 border mx-auto caja text-center my-1" style="width: 300px;">
                     <h6 class="border-bottom">correo</h6>
                     <input type="text"
@@ -135,7 +143,7 @@ export default{
                 telefono: "",
                 correo: "",
                 rol: "cliente",
-                uid: ""
+                fechaNacimiento: ""
             },
             usuario:{
                 Password: "",
