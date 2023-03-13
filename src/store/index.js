@@ -6,6 +6,9 @@ export default createStore({
         user: null,
         photoName: null,
         InvComponents: 0,
+        CliComponents: 0,
+        cliEdit: null,
+        perPage: "5",
     },
     mutations: {
         setAuthenticated(state, value){

@@ -25,14 +25,12 @@
             </tbody>
         </table>
     </div>
-    <Pagination :total-rec="uwu"/>
 </template>
 
 <script>
 import { auto } from '@popperjs/core';
 import { useStore } from 'vuex';
 import firebase from 'firebase';
-import Pagination from '@/components/Pagination/Pagination.vue';
 
 export default{
     beforeMount(){
@@ -56,6 +54,7 @@ export default{
                         // console.log(result.docs[i].data())
                     }
                     this.items = lista
+                    this.totalRec = lista.length
                     this.mostrar = true
                     this.$swal.close()
                 })
@@ -70,10 +69,8 @@ export default{
         return{
             items: null,
             mostrar: false,
+            totalRec: null,
         }
-    },
-    components: {
-        Pagination
     },
     methods: {
         masProducto(item){
@@ -109,7 +106,7 @@ export default{
                 item.Cantidad = item.Cantidad - 1
                 firebase
                     .firestore()
-                    .collection("item")
+                    .collection("items")
                     .doc(item.codigo)
                     .set(item)
                     .then((result) => {
@@ -119,6 +116,19 @@ export default{
             }
             
         },
+    },
+    setup(){
+        const store = useStore()
+
+        return{
+            store
+        }
+    },
+    computed:{
+        registros(){
+            // console.log(this.store.state.perPage)
+            return this.store.state.perPage
+        }
     }
 }
 </script>

@@ -69,7 +69,9 @@ export default {
           this.$router.push("/")
         })
       }
+      console.log(this.store.state.photoName)
       if(this.store.state.photoName !== null){
+        console.log(this.store.state.photoName)
         firebase
           .storage()
           .ref()
@@ -81,7 +83,9 @@ export default {
             img.setAttribute('src', url)
           })
       }
-    }catch(error){}
+    }catch(error){
+      console.log(error)
+    }
   },
   mounted(){
     this.$nextTick(() => {

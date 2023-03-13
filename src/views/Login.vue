@@ -176,9 +176,8 @@ export default{
                 .get()
                 .then(data => {
                   if(data.exists){
-                    // console.log(data.data().usuario)
                     this.store.commit("setUser", data.data().usuario)
-                    this.store.commit("setPhotoName", user.user.photoURL)
+                    this.store.commit("setPhotoName", data.data().usuario.photoName)
                   }
                 })
 
