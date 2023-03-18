@@ -75,24 +75,24 @@
                      v-model="cliente.fechaNacimiento"/>
                 </div>
 
-                <div class="p-1 border mx-auto caja text-center my-1" style="width: 300px;">
+                <div class="p-1 border mx-auto caja text-center my-1" :style="[pantallaGrande ? 'width: 300px;' : '']">
                     <h6 class="border-bottom">correo</h6>
                     <input type="text"
                     class="form-control border-0 formato-inputs"
                     maxlength="50"
-                    style="width: 290px;"
+                    :style="[pantallaGrande ? 'width: 290px;' : '']"
                     v-model="cliente.correo" />
                 </div>
             </div>
-            <div class="d-flex flex-wrap justify-content-start">
-            <button class="btn btn-success px-3 py-1 mb-4 border ms-5" v-on:click="submitForm">
-                <h5>Guardar</h5>
-            </button>
-            <button class="btn btn-danger px-3 py-1 mb-4 border ms-5" v-on:click="eliminarCliente">
-                <h5>Eliminar</h5>
-            </button>
         </div>
-        </div>
+        <div class="d-flex flex-wrap justify-content-around mt-2">
+                <button class="btn btn-success px-3 py-1 mb-4 border" v-on:click="submitForm">
+                    <h5>Guardar</h5>
+                </button>
+                <button class="btn btn-danger px-3 py-1 mb-4 border" v-on:click="eliminarCliente">
+                    <h5>Eliminar</h5>
+                </button>
+            </div>
     </div>
 </template>
 
@@ -110,6 +110,7 @@ export default{
     data(){
         return{
             cliente: null,
+            pantallaGrande: ((window.innerWidth<1000) ? false : true),
         }
     },
     setup(){

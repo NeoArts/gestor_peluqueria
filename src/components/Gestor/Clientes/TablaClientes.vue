@@ -1,58 +1,83 @@
 <template>
-    <div class="d-flex mb-4">
-        <input type="text" 
-         class="form-control ms-5 me-2" 
-         :style="{width: '350px'}"
-         v-model="filtro"
-         v-on:keyup="SoloLetras"
-         maxlength="50"/>
-        <p class="my-auto fw-bold">Ingresa el nombre del Cliente</p>
+    <div v-if="pantallaGrande">
+        <div class="d-flex mb-4">
+            <input type="text" 
+            class="form-control ms-5 me-2" 
+            :style="{width: '350px'}"
+            v-model="filtro"
+            v-on:keyup="SoloLetras"
+            maxlength="50"/>
+            <p class="my-auto fw-bold">Ingresa el nombre del Cliente</p>
+        </div>
+        <div class="table-responsive" v-if="mostrar" :style="{height: '250px'}">
+            <table class="table table-bordered" >
+                <thead>
+                    <tr class="table-dark">
+                        <th scope="col">
+                            <div class="d-flex justify-content-between align-items-center">
+                                Documento 
+                                <span v-on:click="aplicarSort(0)"><i class="fa-solid fa-arrow-down-a-z icono" :style="[filtros ? 'color: white;' : '']"></i></span>
+                            </div>
+                        </th>
+                        <th scope="col">
+                            <div class="d-flex justify-content-between align-items-center">
+                                Nombre
+                                <span v-on:click="aplicarSort(1)"><i class="fa-solid fa-arrow-down-a-z icono"></i></span>
+                            </div>
+                        </th>
+                        <th scope="col">
+                            <div class="d-flex justify-content-between align-items-center">
+                                Edad
+                                <span v-on:click="aplicarSort(2)"><i class="fa-solid fa-arrow-down-1-9 icono"></i></span>
+                            </div>
+                        </th>
+                        <th scope="col">
+                            <div class="d-flex justify-content-between align-items-center">
+                                Correo
+                                <span v-on:click="aplicarSort(3)"><i class="fa-solid fa-arrow-down-a-z icono"></i></span>
+                            </div>
+                        </th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody v-for="cliente in clientes">
+                    <tr style="vertical-align: middle;">
+                        <th scope="row">{{ cliente.documento }}</th>
+                        <td>{{ cliente.nombres }} {{ cliente.apellidos }}</td>
+                        <td>{{ cliente.edad }}</td>
+                        <td>{{ cliente.correo }}</td>
+                        <td>
+                            <button class="p-0 border-0" v-on:click="editar(cliente)">
+                                <i class="fa-solid fa-user-pen icono" ></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-    <div class="table-responsive" v-if="mostrar" :style="{height: '250px'}">
-        <table class="table table-bordered" >
-            <thead>
-                <tr class="table-dark">
-                    <th scope="col">
-                        <div class="d-flex justify-content-between align-items-center">
-                            Documento 
-                            <span v-on:click="aplicarSort(0)"><i class="fa-solid fa-arrow-down-a-z icono" :style="[filtros ? 'color: white;' : '']"></i></span>
-                        </div>
-                    </th>
-                    <th scope="col">
-                        <div class="d-flex justify-content-between align-items-center">
-                            Nombre
-                            <span v-on:click="aplicarSort(1)"><i class="fa-solid fa-arrow-down-a-z icono"></i></span>
-                        </div>
-                    </th>
-                    <th scope="col">
-                        <div class="d-flex justify-content-between align-items-center">
-                            Edad
-                            <span v-on:click="aplicarSort(2)"><i class="fa-solid fa-arrow-down-1-9 icono"></i></span>
-                        </div>
-                    </th>
-                    <th scope="col">
-                        <div class="d-flex justify-content-between align-items-center">
-                            Correo
-                            <span v-on:click="aplicarSort(3)"><i class="fa-solid fa-arrow-down-a-z icono"></i></span>
-                        </div>
-                    </th>
-                    <th scope="col"></th>
-                </tr>
-            </thead>
-            <tbody v-for="cliente in clientes">
-                <tr style="vertical-align: middle;">
-                    <th scope="row">{{ cliente.documento }}</th>
-                    <td>{{ cliente.nombres }} {{ cliente.apellidos }}</td>
-                    <td>{{ cliente.edad }}</td>
-                    <td>{{ cliente.correo }}</td>
-                    <td>
-                        <button class="p-0 border-0" v-on:click="editar(cliente)">
-                            <i class="fa-solid fa-user-pen icono" ></i>
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <div v-else>
+        <div class="d-flex mb-4 align-items-center">
+            <input type="text" 
+            class="form-control ms-1 me-2" 
+            :style="{height: '30px'}"
+            v-model="filtro"
+            v-on:keyup="SoloLetras"
+            maxlength="50"/>
+            <p class="my-auto fw-bold">Ingresa el nombre del Cliente</p>
+        </div>
+        <div class="card mx-3 my-2" v-for="cliente in clientes">
+  <!-- <img src="..." class="card-img-top" alt="..."> -->
+            <div class="card-header">
+                <h4 class="card-title">{{ cliente.nombres }} {{ cliente.apellidos }}</h4>
+            </div>
+            <div class="card-body">
+                <h6 class="card-title">{{ cliente.documento }}</h6>
+                <p class="card-text mb-0"> Edad: {{ cliente.edad }}</p>
+                <p class="card-text mt-0"> Correo: {{ cliente.correo }}</p>
+                <button class="btn btn-primary" v-on:click="editar(cliente)">Editar &nbsp; <i class="fa-solid fa-user-pen icono" style="color: white;"></i></button>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -97,6 +122,7 @@ export default{
             mostrar: false,
             filtro: "",
             filtros: false,
+            pantallaGrande: ((window.innerWidth<1000) ? false : true),
         }
     },
     methods: {
