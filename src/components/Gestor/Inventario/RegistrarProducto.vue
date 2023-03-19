@@ -18,26 +18,16 @@
             </div>
 
             <div class="p-1 border mx-auto caja text-center my-1">
-                <h6 class="border-bottom">Identificador</h6>
-                <select class="form-select border-0 formato-inputs"
-                 v-model="item.identificador"
-                 v-on:change="cambioIdent">
-                    <option value="sv">Servicio</option>
-                    <option value="pr">Producto</option>
-                </select>
-            </div>
-        </div>
-        <div class="d-flex flex-wrap">
-            <div class="p-1 border mx-auto caja text-center my-1">
-                <h6 class="border-bottom"
-                 v-bind:class="[!(item.identificador === 'sv') ? 'text-muted' : '']">Puntos</h6>
+                <h6 class="border-bottom">Puntos</h6>
                 <input type="text"
                  v-on:keyup="formatP"
                  class="form-control border-0 formato-inputs"
                  maxlength="3"
-                 :disabled="!(item.identificador === 'sv')"
                  v-model="item.puntos" />
             </div>
+        </div>
+        <div class="d-flex flex-wrap">
+            
 
             <div class="p-1 border mx-auto caja text-center my-1">
                 <h6 class="border-bottom"
@@ -76,8 +66,7 @@
                      v-model="item.PrecioC" />
                 </div>
             </div>
-        </div>
-        <div>
+
             <div class="p-1 border mx-auto caja text-center my-1">
                 <h6 class="border-bottom">Precio de Venta</h6>
                  <div class="input-group">
@@ -117,7 +106,7 @@ export default{
             item:{
                 codigo: "",
                 producto: "",
-                identificador: null,
+                identificador: "pr",
                 puntos: "",
                 tamano: "",
                 tipotamano: null,
@@ -206,7 +195,7 @@ export default{
             else if (this.item.identificador === "sv" && this.item.puntos === ""){
                 errors = "Revisa el formulario, no debe haber campos vacios";
             }
-            else if(this.item.identificador === "pr" && (this.item.tipotamano === null || this.item.PrecioC === "")){
+            else if(this.item.identificador === "pr" && (this.item.tipotamano === null || this.item.PrecioC === "" || this.item.puntos === "")){
                 errors = "Revisa el formulario, no debe haber campos vacios";
                 
             }

@@ -6,7 +6,7 @@
                 <i class="fa-solid fa-plus"></i>
                 Registrar
             </button>
-            <button class="btn btn-danger" v-on:click="cancelarBoton">
+            <button class="btn btn-danger" v-on:click="cancelarBoton" v-if="store.state.InvComponents !== 0">
                 Cancelar
             </button>
         </div>
@@ -16,6 +16,9 @@
         <div v-if="store.state.InvComponents === 1">
             <RegistrarProducto />
         </div>
+        <div v-if="store.state.InvComponents === 3">
+            <EditProducto />
+        </div>
     </div>
 </template>
 
@@ -23,6 +26,7 @@
 import { useStore } from 'vuex';
 import RegistrarProducto from './Inventario/RegistrarProducto.vue';
 import Productos from './Inventario/Productos.vue';
+import EditProducto from './Inventario/EditProducto.vue';
 
 export default{
     beforeMount(){
@@ -54,7 +58,8 @@ export default{
     },
     components:{
         RegistrarProducto,
-        Productos
+        Productos,
+        EditProducto
     }
 }
 </script>
