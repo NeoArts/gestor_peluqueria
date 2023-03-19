@@ -150,7 +150,7 @@ export default{
         },
         aplicarSort(index){
             if(index === 0){
-                console.log(this.clientes[0].documento.replaceAll(".",""))
+                // console.log(this.clientes[0].documento.replaceAll(".",""))
                 this.clientes.sort(function(a, b){
                     return parseInt(a.documento.replaceAll(".","")) - parseInt(b.documento.replaceAll(".",""))
                 });
