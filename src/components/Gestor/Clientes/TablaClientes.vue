@@ -2,21 +2,21 @@
     <div v-if="pantallaGrande">
         <div class="d-flex mb-4">
             <input type="text" 
-            class="form-control ms-5 me-2" 
-            :style="{width: '350px'}"
-            v-model="filtro"
-            v-on:keyup="SoloLetras"
-            maxlength="50"/>
+             class="form-control ms-5 me-2" 
+             :style="{width: '350px'}"
+             v-model="filtro"
+             v-on:keyup="SoloLetras"
+             maxlength="50"/>
             <p class="my-auto fw-bold">Ingresa el nombre del Cliente</p>
         </div>
-        <div class="table-responsive" v-if="mostrar" :style="{height: '250px'}">
+        <div class="table-responsive" v-if="mostrar" :style="{maxHeight: '250px'}">
             <table class="table table-bordered" >
                 <thead>
                     <tr class="table-dark">
                         <th scope="col">
                             <div class="d-flex justify-content-between align-items-center">
                                 Documento 
-                                <span v-on:click="aplicarSort(0)"><i class="fa-solid fa-arrow-down-a-z icono" :style="[filtros ? 'color: white;' : '']"></i></span>
+                                <span v-on:click="aplicarSort(0)"><i class="fa-solid fa-arrow-down-a-z icono"></i></span>
                             </div>
                         </th>
                         <th scope="col">
@@ -143,21 +143,17 @@ export default{
                 }
                 this.clientes = list
             }
+            else{
+                this.filtro = this.filtro.replace(/[^\d\.]*/g,'');
+            }
             
         },
         aplicarSort(index){
             if(index === 0){
+                console.log(this.clientes[0].documento.replaceAll(".",""))
                 this.clientes.sort(function(a, b){
-                    if(a.documento >  b.documento){
-                        return 1;
-                    }
-                    if (a.documento < b.documento) {
-                        return -1;
-                    }
-                    return 0;
+                    return parseInt(a.documento.replaceAll(".","")) - parseInt(b.documento.replaceAll(".",""))
                 });
-                this.filtros= true
-                console.log(this.filtros)
             }
             if(index === 1){
                 this.clientes.sort(function(a, b){
@@ -208,10 +204,7 @@ export default{
 button{
     background-color: white;
 }
-.icono .active{
-    color: white;
-}
-.icono {
-    color: gray;
+span{
+    cursor: pointer;
 }
 </style>
