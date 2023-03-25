@@ -1,5 +1,5 @@
 <template>
     <body>
-        Home
+        caja
     </body>
 </template>

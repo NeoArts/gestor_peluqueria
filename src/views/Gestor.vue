@@ -20,6 +20,7 @@
               <router-link to="/gestor/clientes" class="nav-link active link_pg border border-bottom-0" :class="{ link_pg_activo: (this.$route.path === '/gestor/clientes') }">Clientes</router-link>
               <router-link to="/gestor/empleados" class="nav-link active link_pg border border-bottom-0" :class="{ link_pg_activo: (this.$route.path === '/gestor/empleados') }">Empleados</router-link>
               <router-link to="/gestor/inventario" class="nav-link active link_pg border border-bottom-0" :class="{ link_pg_activo: (this.$route.path === '/gestor/inventario') }">Inventario</router-link>
+              <router-link to="/gestor/servicios" class="nav-link active link_pg border border-bottom-0" :class="{ link_pg_activo: (this.$route.path === '/gestor/servicios') }">Servicios</router-link>
             </nav>
             <router-view></router-view>
           </div>
@@ -33,14 +34,28 @@
         <h1 class="ms-auto mx-auto text-center">{{ store.state.user.nombres }} {{ store.state.user.apellidos }}</h1>
         <h5 class="mx-auto mb-3 fst-italic text-decoration-underline" id="rol">{{store.state.user.rol}}</h5>
 
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+            {{ link_act }}
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+            <li><button class="dropdown-item" type="button" v-on:click="cambiarLink('Home')"><router-link to="/gestor" class="link_pp text-decoration-none">Home</router-link></button></li>
+            <li><button class="dropdown-item" type="button" v-on:click="cambiarLink('Clientes')"><router-link to="/gestor/clientes" class="link_pp text-decoration-none">Clientes</router-link></button></li>
+            <li><button class="dropdown-item" type="button" v-on:click="cambiarLink('Empleados')"><router-link to="/gestor/empleados" class="link_pp text-decoration-none">Empleados</router-link></button></li>
+            <li><button class="dropdown-item" type="button" v-on:click="cambiarLink('Inventario')"><router-link to="/gestor/inventario" class="link_pp text-decoration-none">Inventario</router-link></button></li>
+            <li><button class="dropdown-item" type="button" v-on:click="cambiarLink('Servicios')"><router-link to="/gestor/servicios" class="link_pp text-decoration-none">Servicios</router-link></button></li>
+          </ul>
+        </div>
+
         <div class="border p-1">
-          <nav class="nav">
-            <!-- <a class="nav-link active" aria-current="page" href="#">Active</a> -->
+          <!-- <nav class="nav">
+            <a class="nav-link active" aria-current="page" href="#">Active</a>
             <router-link to="/gestor" class="nav-link active px-2 py-1 border border-bottom-0 link_pp" :class="{ link_pg_activo: (this.$route.path === '/gestor') }">Home</router-link>
             <router-link to="/gestor/clientes" class="nav-link active px-2 py-1 border border-bottom-0 link_pp" :class="{ link_pg_activo: (this.$route.path === '/gestor/clientes') }">Clientes</router-link>
             <router-link to="/gestor/empleados" class="nav-link active px-2 py-1 border border-bottom-0 link_pp" :class="{ link_pg_activo: (this.$route.path === '/gestor/empleados') }">Empleados</router-link>
             <router-link to="/gestor/inventario" class="nav-link active px-2 py-1 border border-bottom-0 link_pp" :class="{ link_pg_activo: (this.$route.path === '/gestor/inventario') }">Inventario</router-link>
-          </nav>
+            <router-link to="/gestor/servicios" class="nav-link active link_pg border border-bottom-0 link_pp" :class="{ link_pg_activo: (this.$route.path === '/gestor/servicios') }">Servicios</router-link>
+          </nav> -->
           <router-view></router-view>
         </div>
       </div>
@@ -103,6 +118,7 @@ export default {
       mostrar: true,
       pantallaGrande: ((window.innerWidth<1000) ? false : true),
       urlPhoto: null,
+      link_act: "Home",
     }
   },
 
@@ -112,6 +128,9 @@ export default {
       if(this.urlPhoto){
         this.setPhoto();
       }
+    },
+    cambiarLink(link){
+      this.link_act = link
     },
   },
 
@@ -172,10 +191,10 @@ export default {
     margin-right: auto;
   }
   .link_pp{
-    font-size: smaller;
-    border-top-right-radius: 20%;
-    border-top-left-radius: 20%;
-    background-color: rgb(199, 199, 199);
+    color: black;
+  }
+  .link_pg:hover{
+    background-color: rgb(136, 136, 136);
   }
   .link_pg{
     border-top-right-radius: 20%;

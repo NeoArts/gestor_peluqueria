@@ -64,7 +64,7 @@
             v-model="filtro"
             v-on:keyup="SoloLetras"
             maxlength="50"/>
-            <p class="my-auto fw-bold">Ingresa el nombre del Cliente</p>
+            <p class="my-auto fw-bold">Cliente</p>
         </div>
         <div class="card mx-3 my-2" v-for="cliente in clientes">
   <!-- <img src="..." class="card-img-top" alt="..."> -->
