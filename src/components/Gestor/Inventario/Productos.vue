@@ -60,12 +60,12 @@
     <div v-else>
         <div class="d-flex mb-4 align-items-center">
             <input type="text" 
-            class="form-control ms-1 me-2" 
-            :style="{height: '30px'}"
-            v-model="filtro"
-            v-on:keyup="SoloLetras"
-            maxlength="50"/>
-            <p class="my-auto fw-bold">Ingresa el nombre del Producto</p>
+             class="form-control ms-1 me-2" 
+             :style="{height: '30px'}"
+             v-model="filtro"
+             v-on:keyup="SoloLetras"
+             maxlength="50"/>
+            <p class="my-auto fw-bold">Producto</p>
         </div>
         <div class="card mx-3 my-2" v-for="item in items">
             <div class="card-header">
@@ -105,15 +105,12 @@ export default{
             firebase
                 .firestore()
                 .collection("items")
+                .where("identificador", "==", "pr")
                 .get()
                 .then((result) => {
                     var lista = []
                     for(var i in result.docs){
-                        if(result.docs[i].data().identificador === "pr"){
-                            lista.push(result.docs[i].data())
-                        }
-                        
-                        // console.log(result.docs[i].data())
+                        lista.push(result.docs[i].data())
                     }
                     this.items = lista
                     this.itemsAux = lista

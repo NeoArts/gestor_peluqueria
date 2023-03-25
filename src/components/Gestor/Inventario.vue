@@ -1,6 +1,6 @@
 <template>
     <div class="contenedor_inventario border">
-        <div class="d-flex justify-content-end m-3" v-if="isAdmin">
+        <div class="d-flex justify-content-end m-3">
             <button type="button" class="btn btn-success me-2"
              v-on:click="registrar">
                 <i class="fa-solid fa-plus"></i>

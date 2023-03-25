@@ -9,6 +9,9 @@ export default createStore({
         proEdit: null,
         CliComponents: 0,
         cliEdit: null,
+        SerComponents: 0,
+        serEdit: null,
+
     },
     mutations: {
         setAuthenticated(state, value){
