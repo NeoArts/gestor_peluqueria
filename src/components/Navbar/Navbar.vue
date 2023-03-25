@@ -23,27 +23,26 @@
 
     <div class="barra_pp d-flex justify-content-between border-bottom" v-if="!mostrar"> 
         <img src="../../assets/logo.png" class="my-auto ms-5" alt="" width="50" height="50" v-on:click="navegar_Home">
-        <button class="me-5 p-0" v-on:click="showMenu">
+        <button class="btn me-5 p-0" id="botonMenu">
             <i class="fa-solid fa-bars fa-2x my-auto" style="color: white; cursor: pointer;"></i>
         </button>
         
     </div>
-    
+        
     <transition name="fade">
-        <div class="MenuOpc"  v-if="mostrarMenu" id="MenuOpcPP">
+        <div class="MenuOpc" id="MenuOpcPP">
             <h5 class="text-center my-2">Servicios</h5>
             <h5 class="text-center my-2">Equipo</h5>
             <h5 class="text-center my-2">Sobre Nosotros</h5>
             <div class="LogContainer text-center mt-2 me-0" v-on:click="navegar_Login" v-if="!store.state.isAuthenticated">
                 <h5 class="">Iniciar Sesión</h5>
             </div>
-            <div class="LogContainer text-center mt-2 me-0" v-on:click="cerrarSesion()" v-else>
+            <div class="LogContainer text-center mt-2 me-0" v-on:click="cerrarSesion" v-else>
                 <h5 class="">Cerrar Sesión</h5>
             </div>
         </div>
     </transition>
-    
-    
+
 
 </template>
 
@@ -69,9 +68,22 @@ export default{
         this.$nextTick(() => {
             window.addEventListener('resize',this.onResize);
         })
-        document.addEventListener('click', function(event) {
-            if(event.target.id === 'MenuOpcPP'){
-                console.log("Hola UwU")
+        document.addEventListener("mouseup", function(event){
+            var obj = document.getElementById('MenuOpcPP');
+            var boton = document.getElementById('botonMenu')
+            if(!obj.contains(event.target) ){
+                if(boton.contains(event.target)){
+                    // console.log(obj.style.visibility)
+                    if(obj.style.visibility === "hidden" || obj.style.visibility === ""){
+                        obj.style.visibility = "visible";
+                    }
+                    else{
+                        obj.style.visibility = "hidden";
+                    }
+                }
+                else{
+                    obj.style.visibility = "hidden";
+                }
             }
         })
     },
@@ -92,23 +104,19 @@ export default{
                 this.mostrarNombre = true
             }
         },
-        cerrarMenu(){
-            this.mostrarMenu = false
-        },
         navegar_Home(){
             this.$router.push("/");
         },
         navegar_Login(){
             this.$router.push("/login")
-        },
-        showMenu(){
-            this.mostrarMenu = !this.mostrarMenu
+            document.getElementById('MenuOpcPP').style.visibility = "hidden"
         },
         cerrarSesion(){
             this.store.commit("setAuthenticated", false)
             this.store.commit("setUser", null)
             this.store.commit("setPhotoName", null)
             this.$router.push("/")
+            document.getElementById('MenuOpcPP').style.visibility = "hidden"
         },
     },
     setup(){
@@ -169,6 +177,7 @@ export default{
     z-index: 1;
     background: rgba(0, 0, 0, 0.6);
     border-top: 0.45rem solid #9f7c40;
+    visibility: hidden;
 }
 .contenedor_barra{
     transition: 150ms;
