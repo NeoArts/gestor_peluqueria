@@ -1,6 +1,6 @@
 <template>
     <div class="container_empleados">
-        <div class="table-responsive" v-if="pantallaGrande">
+        <div class="table-responsive" v-if="pantallaGrande" :style="{maxHeight: '250px'}">
 
             <div class="d-flex justify-content-end m-3" v-if="isAdmin">
                 <button type="button" class="btn btn-success"
@@ -12,19 +12,39 @@
 
             <table class="table table-bordered" v-if="mostrar">
                 <thead>
-                    <tr>
-                        <th scope="col">Id</th>
-                        <th scope="col">Nombres</th>
-                        <th scope="col">Apellidos</th>
-                        <th scope="col">Correo</th>
+                    <tr class="table-dark">
+                        <th scope="col">
+                            <div class="d-flex justify-content-between align-items-center">
+                                Documento
+                                <span v-on:click="aplicarSort(0)"><i class="fa-solid fa-arrow-down-a-z icono"></i></span>
+                            </div>
+                        </th>
+                        <th scope="col">
+                            <div class="d-flex justify-content-between align-items-center">
+                                Nombre
+                                <span v-on:click="aplicarSort(1)"><i class="fa-solid fa-arrow-down-a-z icono"></i></span>
+                            </div>
+                        </th>
+                        <th scope="col">
+                            <div class="d-flex justify-content-between align-items-center">
+                                Telefono
+                                <span v-on:click="aplicarSort(2)"><i class="fa-solid fa-arrow-down-a-z icono"></i></span>
+                            </div>
+                        </th>
+                        <th scope="col">
+                            <div class="d-flex justify-content-between align-items-center">
+                                Correo
+                                <span v-on:click="aplicarSort(3)"><i class="fa-solid fa-arrow-down-a-z icono"></i></span>
+                            </div>
+                        </th>
                         <th scope="col" v-if="isAdmin"></th>
                     </tr>
                 </thead>
                 <tbody v-for="user in usuarios" >
                     <tr style="vertical-align: middle;">
                         <th scope="row">{{ user.NoIdentificacion }}</th>
-                        <td>{{ user.nombres }}</td>
-                        <td>{{ user.apellidos }}</td>
+                        <td>{{ user.nombres }} {{ user.apellidos }}</td>
+                        <td>{{ user.celular }}</td>
                         <td>{{ user.correo }}</td>
                         <td v-if="isAdmin">
                             <button class="p-0 border-0" v-on:click="editar(''+user.uid)">
@@ -95,7 +115,7 @@ export default{
     },
     mounted(){
         this.$nextTick(() => {
-        window.addEventListener('resize',this.onResize);
+            window.addEventListener('resize',this.onResize);
         })
     },
     beforeDestroy() {
@@ -107,6 +127,7 @@ export default{
             mostrar: false,
             pantallaGrande: ((window.innerWidth<1000) ? false : true),
             isAdmin: false,
+            filtro: "",
         }
     },
     methods:{
@@ -118,6 +139,24 @@ export default{
         },
         editar(uid){
             this.$router.push("/editEmployee/"+uid)
+        },
+        aplicarSort(index){
+            if(index === 0){
+                this.usuarios.sort(function (a, b){
+                    return parseInt(a.NoIdentificacion) - parseInt(b.NoIdentificacion)
+                })
+            }
+            if(index === 1){
+                this.usuarios = this.usuarios.sort(function(a, b){
+                    if(a.nombres >  b.nombres){
+                        return 1;
+                    }
+                    if (a.nombres < b.nombres) {
+                        return -1;
+                    }
+                    return 0;
+                });
+            }
         },
     },
     setup(){
@@ -152,7 +191,7 @@ export default{
 
 <style>
 .container_empleados{
-    background-color: aliceblue;
+    background-color: white;
 }
 .icono{
     cursor: pointer;
