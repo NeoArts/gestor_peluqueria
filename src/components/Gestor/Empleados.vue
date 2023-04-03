@@ -103,7 +103,9 @@ export default{
             .then((result) => {
                 var lista = []
                 for(var i in result.docs){
-                    lista.push(result.docs[i].data().usuario)
+                    if(result.docs[i].data().usuario.rol !== "caja"){
+                        lista.push(result.docs[i].data().usuario)
+                    }
                 }
                 this.usuarios = lista
                 this.mostrar = true

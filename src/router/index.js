@@ -47,6 +47,11 @@ const routes = [
         component: () => import("../components/Gestor/Servicios.vue")
       }
     ]
+  },
+  {
+    path: '/caja',
+    name: 'caja',
+    component: () => import("../views/Caja.vue")
   }
 ]
 

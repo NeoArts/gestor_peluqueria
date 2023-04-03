@@ -97,6 +97,7 @@
 <script>
 import { useStore } from "vuex";
 import firebase from "firebase";
+import { isIfStatement } from "@babel/types";
 
 export default{
   data(){
@@ -177,7 +178,18 @@ export default{
                 .then(data => {
                   if(data.exists){
                     this.store.commit("setUser", data.data().usuario)
-                    this.store.commit("setPhotoName", data.data().usuario.photoName)
+
+                    // console.log(this.store.state.user)
+
+                    if(this.store.state.user.rol === "admin"){
+                      this.store.commit("setPhotoName", data.data().usuario.photoName)
+                      setTimeout(() => {
+                        this.$router.push("/gestor")
+                      }, 2000)
+                    }
+                    if(this.store.state.user.rol === "caja"){
+                      this.$router.push("/caja")
+                    }
                   }
                 })
 
@@ -192,11 +204,9 @@ export default{
                   this.$swal.showLoading();
                 }
               })
-              
-
-              setTimeout(() => {
-                this.$router.push("/gestor")
-              }, 2000)
+              // setTimeout(() => {
+              //   this.$router.push("/gestor")
+              // }, 2000)
               
             }
             else{
@@ -205,6 +215,7 @@ export default{
                 title: 'Lo sentimos!',
                 text: 'El email aun no se encuentra verificado'
               });
+              user.user.sendEmailVerification();
             }
           })
       }catch(error){
