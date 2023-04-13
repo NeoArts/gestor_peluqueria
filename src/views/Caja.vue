@@ -1,5 +1,5 @@
 <template>
-    <div class="contenedor_principal_caja">
+    <div class="contenedor_principal_caja" v-if="mostrar">
         <div class="card" v-if="pantallaGrande" style="margin-left: 140px; margin-right: 140px; margin-top: 160px;">
             <div class="card-header">
                 <h1 class="text-center">Galfersh Barber</h1>
@@ -46,63 +46,69 @@
                              v-on:click="selectCli(cli)">{{ cli.nombres }} {{ cli.apellidos }}</p>
                         </div>
                     </div>
-                    
                 </div>
-                <div class="d-flex flex-wrap">
-                    <div class="p-1 border mx-auto caja text-center my-1">
-                        <h6 class="border-bottom">Servicio/Producto</h6>
-                        <input type="text"
-                         id="SerPro"
-                         class="form-control border-0 formato-inputs"
-                         maxlength="30"
-                         v-on:keyup="filtroSerPro"
-                         v-model="filtro.item"/>
-                         <div class="border contenedor_opciones hide" id="list_items">
-                            <p class="my-1 opciones rounded mx-2"
-                             v-for="item in items"
-                             v-on:click="selectSerPro(item)">{{ item.producto }}</p>
-                         </div>
-                    </div>
 
-                    <div class="p-1 border mx-auto caja text-center my-1">
-                        <h6 class="border-bottom">Puntos</h6>
-                        <input type="text"
-                         class="form-control border-0 formato-inputs"
-                         disabled
-                         v-model="registroVenta.puntos"/>
+                <div class="border rounded-3 container shadow my-4">
+                    <div class="mt-2"
+                     style="margin-left: 100px; margin-right: 100px;">
+                        <h5 class="p-2 m-0">Carrito</h5>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="border mx-3 p-1 text-center"
+                             style="width: 250px; border-radius: 5px;">
+                                <h6 class="border-bottom">Servicio o Producto</h6>
+                                <input type="text"
+                                 id="SerPro"
+                                 class="form-control border-0 formato-inputs"
+                                 maxlength="30"
+                                 v-on:keyup="filtroSerPro"
+                                 v-model="filtro.item"/>
+                                <div class="contenedor_opciones hide" id="list_items">
+                                    <p class="my-1 opciones rounded mx-2"
+                                     v-for="item in items"
+                                     v-on:click="selectSerPro(item)">
+                                        {{ item.producto }}
+                                    </p>
+                                </div>
+                            </div>  
+                            <div>
+                                <p class="text-muted m-0 text-end">Total</p>
+                                <h5 class="text-end">${{ registroVenta.total }}</h5>
+                            </div>                          
+                        </div>
                     </div>
+                    <div class="mb-2"
+                     style="margin-left: 100px; margin-right: 100px;">
+                        <div v-if="carrito.length !== 0">
+                            <div class="d-flex border justify-content-around my-3 mx-0 shadow-sm border-3 rounded-3" 
+                             style="width: 100%;"
+                             v-for="item in carrito">
+                                <div class="my-4 d-flex align-items-center">
+                                    <i v-if="item.identificador === 'sv'" class="fa-solid ms-3 fa-scissors fa-2xl  p-2"></i>
+                                    <i v-if="item.identificador === 'pr'" class="fa-solid ms-3 fa-jar fa-2xl p-2"></i>
+                                    <div class="my-auto ms-5">
+                                        <h5 class="fw-bold">{{ item.producto }}</h5>
+                                        <div class="d-flex align-items-center">
+                                            <p class="my-0 fs-5 fst-italic fw-bolder">Total: </p>&nbsp;&nbsp;&nbsp;
+                                            <p class="my-0 fs-5 fw-light">{{ item.PrecioV }}</p>
+                                        </div>
+                                    </div>
+                                </div>
 
-                    <div class="p-1 border mx-auto caja text-center my-1">
-                        <h6 class="border-bottom"
-                         v-bind:class="[(filtro.identificador === 'pr') ? '' : 'text-muted']">Cantidad</h6>
-                        <input type="text" 
-                         class="form-control border-0 formato-inputs"
-                         maxlength="2"
-                         :disabled="!(filtro.identificador === 'pr')"
-                         v-on:keyup="format(0)"
-                         v-model="registroVenta.cantidad"/>
+                                <div class="border my-auto ms-5" 
+                                 style="margin-right: 0%;">
+                                    <p class="my-0 fs-5 fst-italic fw-bolder">Puntos</p>
+                                    <p class="my-0 fs-5 fw-light">{{ item.puntos }}</p>
+                                </div>
+
+                                <div class="my-auto d-flex">
+                                    <button class="p-0 border-0" v-on:click="deleteSerPro(item.codigo)"><i class="fa-solid fa-circle-xmark fa-xl"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else>No hay servicios o productos registrados</div>
                     </div>
                 </div>
-                <div class="d-flex flex-wrap">
-                    <div class="p-1 border mx-auto caja text-center my-1">
-                        <h6 class="border-bottom">Metodo de Pago</h6>
-                        <select class="form-control border-0 formato-inputs"
-                         v-model="registroVenta.metodoPago">
-                            <option value="puntos">Puntos</option>
-                            <option value="efectivo">Efectivo</option>
-                            <option value="nequi">Nequi</option>
-                            <option value="daviplata">Daviplata</option>
-                            <option value="bancolombia">Qr Bancolombia</option>
-                        </select>
-                    </div>
-                    <div class="p-1 border mx-auto caja text-center my-1">
-                        <h6 class="border-bottom">Total</h6>
-                        <input type="text"
-                         class="form-control border-0 formato-inputs"
-                         disabled
-                         v-model="registroVenta.total"/>
-                    </div>
-                </div>
+                
             </div>
         </div>
 
@@ -122,10 +128,12 @@
 
 <script>
 import firebase from 'firebase'
+import { useStore } from 'vuex'
 export default{
     data(){
         return{
             pantallaGrande: ((window.innerWidth<1000) ? false : true),
+            mostrar: false,
             empleados: null,
             empleadosList: null,
             items: null,
@@ -133,6 +141,7 @@ export default{
             clientes: null,
             clientesList: null,
             precioSelect: null,
+            carrito: [],
             filtro:{
                 barbero: "",
                 cliente: "",
@@ -147,72 +156,89 @@ export default{
                 puntos: null,
                 cantidad: "",
                 metodoPago: null,
-                total: "",
+                total: 0,
             }
         }
     },
     beforeMount(){
-        this.formatoFecha(this.registroVenta.fecha)
-        firebase
-            .firestore()
-            .collection("nomina")
-            .get()
-            .then((result) => {
-                var list = []
-                for(var i in result.docs){
-                    if(result.docs[i].data().usuario.rol !== "caja"){
+        console.log(this.store.state.user)
+        if(this.store.state.user === null || this.store.state.user.rol === "barbero"){
+            this.$swal({
+                icon: 'error',
+                title: 'Tenemos un problema',
+                text: 'Ha ocurrido un problema, lo sentimos',
+                confirmButtonText: 'Volver'
+            }).then(() => {
+                this.$router.push("/")
+            })
+        } 
+        else{
+            
+            this.formatoFecha(this.registroVenta.fecha)
+            firebase
+                .firestore()
+                .collection("nomina")
+                .get()
+                .then((result) => {
+                    var list = []
+                    for(var i in result.docs){
+                        if(result.docs[i].data().usuario.rol !== "caja"){
+                            list.push(result.docs[i].data().usuario)
+                        }
+                    }
+                    this.empleados = list
+                    this.empleadosList = list
+                })
+            firebase
+                .firestore()
+                .collection("items")
+                .get()
+                .then((result) => {
+                    var list = []
+                    for(var i in result.docs){
+                        list.push(result.docs[i].data())
+                    }
+                    this.items = list
+                    this.itemsList = list
+                })
+            firebase
+                .firestore()
+                .collection("clientes")
+                .get()
+                .then((result) => {
+                    var list = []
+                    for(var i in result.docs){
                         list.push(result.docs[i].data().usuario)
                     }
-                }
-                this.empleados = list
-                this.empleadosList = list
-            })
-        firebase
-            .firestore()
-            .collection("items")
-            .get()
-            .then((result) => {
-                var list = []
-                for(var i in result.docs){
-                    list.push(result.docs[i].data())
-                }
-                this.items = list
-                this.itemsList = list
-            })
-        firebase
-            .firestore()
-            .collection("clientes")
-            .get()
-            .then((result) => {
-                var list = []
-                for(var i in result.docs){
-                    list.push(result.docs[i].data().usuario)
-                }
-                this.clientes = list
-                this.clientesList = list
-                console.log(this.clientes)
-            })
+                    this.clientes = list
+                    this.clientesList = list
+                    // console.log(this.clientes)
+                })
+            this.mostrar = true
+        }       
     },
     mounted(){
         this.$nextTick(() => {
             window.addEventListener('resize',this.onResize);
         })
-        const barbero = document.getElementById("barbero")
-        barbero.addEventListener("focusin", () => {
-            const lista = document.getElementById("list_empleados")
-            lista.classList.remove("hide")
-        });
-        const cliente = document.getElementById("cliente")
-        cliente.addEventListener("focusin", () => {
-            const lista = document.getElementById("list_clientes")
-            lista.classList.remove("hide")
-
-        })
-        const SerPro = document.getElementById("SerPro")
-        SerPro.addEventListener("focusin", () => {
-            const lista = document.getElementById("list_items")
-            lista.classList.remove("hide")
-        });
+        if(this.mostrar){
+            const barbero = document.getElementById("barbero")
+            barbero.addEventListener("focusin", () => {
+                const lista = document.getElementById("list_empleados")
+                lista.classList.remove("hide")
+            });
+            const cliente = document.getElementById("cliente")
+            cliente.addEventListener("focusin", () => {
+                const lista = document.getElementById("list_clientes")
+                lista.classList.remove("hide")
+            })
+            const SerPro = document.getElementById("SerPro")
+            SerPro.addEventListener("focusin", () => {
+                const lista = document.getElementById("list_items")
+                lista.classList.remove("hide")
+            });
+        }
+        
         // const contenedor_barbero = document.getElementById("contenedor_barbero")
         // contenedor_barbero.addEventListener("focusout", () => {
         //     const lista = document.getElementById("list_empleados")
@@ -276,42 +302,34 @@ export default{
             lista.classList.add("hide")
         },
         selectSerPro(SerPro){
-            // console.log(SerPro)
+            console.log(SerPro)
             this.filtro.item = SerPro.producto
-            this.filtro.identificador = SerPro.identificador
-            this.registroVenta.item = SerPro.codigo
-            this.registroVenta.puntos = SerPro.puntos
-            this.precioSelect = SerPro.PrecioV
-            if(SerPro.identificador === "sv"){
-                this.registroVenta.cantidad = ""
-                this.registroVenta.total = this.precioSelect
-            }
-            if(SerPro.identificador === "pr"){
-                this.registroVenta.total = ""
-            }
+            this.carrito.push(SerPro)
+            this.registroVenta.total += parseInt(SerPro.PrecioV.replaceAll(".",""))
             const lista = document.getElementById("list_items")
             lista.classList.add("hide")
         },
-        format(index){
-            if(index === 0){
-                var regex = new RegExp("^[0-9\s]*$");
-                if(!regex.test(this.registroVenta.cantidad)){
-                    this.$swal({
-                        icon: 'error',
-                        title: 'En este campo solo se permiten números'
-                    })
-                    this.registroVenta.cantidad = this.registroVenta.cantidad.replace(/[^\d\.]*/g,'');
-                }
-                else{
-                    console.log(this.registroVenta.cantidad.split(".")[1])
-                    this.registroVenta.total = ""+parseInt(this.registroVenta.cantidad) * parseFloat(this.precioSelect)
-                    if(this.precioSelect.split(".")[1] === "000"){
-                        this.registroVenta.total = this.registroVenta.total+".000"
-                    }
-                    
+        deleteSerPro(codigo){
+            // console.log(codigo)
+            // this.carrito = this.carrito.filter(element => element.codigo !== codigo)
+            // console.log(this.carrito)
+            var lista = []
+            for(var i in this.carrito){
+                if(this.carrito[i].codigo === codigo){
+                    this.carrito.splice(i,1)
+                    break;
                 }
             }
+            this.$forceUpdate();
+            // this.registroVenta.total -= parseInt(SerPro.PrecioV.replaceAll(".",""))
         },
+    },
+    setup(){
+        const store = useStore();
+
+        return{
+            store
+        }
     }
 }
 </script>
@@ -347,5 +365,11 @@ export default{
 .contenedor_opciones{
     max-height: 115px;
     overflow-y: scroll;
+}
+button{
+    background-color: white;
+}
+button :hover{
+    background-color: rgb(169, 169, 169);
 }
 </style>
