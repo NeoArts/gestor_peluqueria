@@ -424,7 +424,7 @@ export default{
                     console.log("Puntos Aun no implementado")
                 }
                 else if(this.registroVenta.metodoPago === "ef"){
-                    if(this.filtro.efectivo > this.registroVenta.total){
+                    if(this.filtro.efectivo >= this.registroVenta.total){
                         var vueltas = this.filtro.efectivo -this.registroVenta.total
                         this.$swal({
                             icon: 'question',
@@ -480,7 +480,7 @@ export default{
                                 firebase
                                     .firestore()
                                     .collection("ventas")
-                                    .doc(this.registroVenta.fecha)
+                                    .doc()
                                     .set(this.registroVenta)
                                     .then((result) => {
                                         this.$swal.close();
@@ -516,6 +516,84 @@ export default{
                         })
                     }
                     
+                }
+                else{
+                    this.$swal({
+                        icon: 'question',
+                        title: 'Registrar Venta?',
+                        text: 'Verifica que la información este bien',
+                        html: `
+                        <div class="d-flex border flex-column bd-highlight mb-3">
+                            <div class="p-2 bd-highlight border">
+                                <div class="d-flex justify-content-around mb-2 p-0">
+                                    <div class="m-0">
+                                        <p class="border-bottom fst-italic m-0">Barbero</p>
+                                        <p class="my-1">`+this.registroVenta.barbero+`</p>
+                                    </div>
+                                    <div class="m-0">
+                                        <p class="border-bottom fst-italic m-0">Cliente</p>
+                                        <p class="my-1">`+this.registroVenta.cliente+`</p>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-around mb-2 p-0">
+                                    <div class="m-0">
+                                        <p class="border-bottom fst-italic m-0">Método de Pago</p>
+                                        <p class="my-1">`+this.registroVenta.metodoPago+`</p>
+                                    </div>
+                                    <div class="m-0">
+                                        <p class="border-bottom fst-italic m-0">Total</p>
+                                        <p class="my-1">`+this.registroVenta.total+`</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        `,
+                        showCancelButton: true,
+                        confirmButtonText: 'Registrar Venta',
+                        cancelButtonText: 'Cancelar',
+                        reverseButtons: true
+                    }).then((result) => {
+                        this.$swal({
+                            allowEscapeKey: false,
+                            allowOutsideClick: false,
+                            width: auto,
+                            didOpen: () => {
+                                this.$swal.showLoading();
+                            }
+                        })
+                        try{
+                            firebase
+                                .firestore()
+                                .collection("ventas")
+                                .doc()
+                                .set(this.registroVenta)
+                                .then((result) => {
+                                    this.$swal.close();
+                                    this.registroVenta = {
+                                        fecha:  new Date().toLocaleDateString(),
+                                        barbero: null,
+                                        cliente: null,
+                                        items: [],
+                                        metodoPago: "ef",
+                                        total: 0,
+                                    }
+                                    this.filtro = {
+                                        barbero: "",
+                                        cliente: "",
+                                        item: "",
+                                        identificador: null,
+                                        efectivo: "",
+                                    }
+                                    this.carrito = []
+                                })
+                        }catch(error){
+                            this.$swal({
+                                icon: 'error',
+                                text: error.message
+                            })
+                        }
+                    })
                 }
             }
         },
