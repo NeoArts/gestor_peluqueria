@@ -77,36 +77,95 @@
                         </div>
                     </div>
                     <div class="mb-2"
-                     style="margin-left: 100px; margin-right: 100px;">
+                     style="margin-left: 100px; margin-right: 100px; max-height: 300px; overflow: scroll;">
                         <div v-if="carrito.length !== 0">
-                            <div class="d-flex border justify-content-around my-3 mx-0 shadow-sm border-3 rounded-3" 
-                             style="width: 100%;"
+                            <div style="width: 100%;"
                              v-for="item in carrito">
-                                <div class="my-4 d-flex align-items-center">
-                                    <i v-if="item.identificador === 'sv'" class="fa-solid ms-3 fa-scissors fa-2xl  p-2"></i>
-                                    <i v-if="item.identificador === 'pr'" class="fa-solid ms-3 fa-jar fa-2xl p-2"></i>
-                                    <div class="my-auto ms-5">
-                                        <h5 class="fw-bold">{{ item.producto }}</h5>
-                                        <div class="d-flex align-items-center">
-                                            <p class="my-0 fs-5 fst-italic fw-bolder">Total: </p>&nbsp;&nbsp;&nbsp;
-                                            <p class="my-0 fs-5 fw-light">{{ item.PrecioV }}</p>
+                                <div v-if="item.identificador === 'sv'" class="d-flex border justify-content-around my-3 mx-0 shadow-sm border-3 rounded-3" >
+                                    <div class="my-4 d-flex align-items-center">
+                                        <i class="fa-solid ms-3 fa-scissors fa-2xl  p-2"></i>
+                                        <!-- <i v-if="item.identificador === 'pr'" class="fa-solid ms-3 fa-jar fa-2xl p-2"></i> -->
+                                        <div class="my-auto ms-5">
+                                            <h5 class="fw-bold">{{ item.producto }}</h5>
+                                            <div class="d-flex align-items-center">
+                                                <p class="my-0 fs-5 fst-italic fw-bolder">Total: </p>&nbsp;&nbsp;&nbsp;
+                                                <p class="my-0 fs-5 fw-light">{{ item.PrecioV }}</p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="border my-auto ms-5" 
-                                 style="margin-right: 0%;">
-                                    <p class="my-0 fs-5 fst-italic fw-bolder">Puntos</p>
-                                    <p class="my-0 fs-5 fw-light">{{ item.puntos }}</p>
-                                </div>
+                                    <div class="my-auto ms-5" 
+                                    style="margin-right: 0%;">
+                                        <p class="my-0 fs-5 fst-italic fw-bolder">Puntos</p>
+                                        <p class="my-0 fs-5 fw-light">{{ item.puntos }}</p>
+                                    </div>
 
-                                <div class="my-auto d-flex">
-                                    <button class="p-0 border-0" v-on:click="deleteSerPro(item.codigo)"><i class="fa-solid fa-circle-xmark fa-xl"></i></button>
+                                    <div class="my-auto d-flex">
+                                        <button class="p-0 border-0" v-on:click="deleteSerPro(item.codigo)"><i class="fa-solid fa-circle-xmark fa-xl"></i></button>
+                                    </div>
                                 </div>
+                                <div v-if="item.identificador === 'pr'" class="d-flex border justify-content-around my-3 mx-0 shadow-sm border-3 rounded-3">
+                                    <div class="my-4 d-flex align-items-center">
+                                        <!-- <i class="fa-solid ms-3 fa-scissors fa-2xl  p-2"></i> -->
+                                        <i class="fa-solid ms-3 fa-jar fa-2xl p-2"></i>
+                                        <div class="my-auto ms-5">
+                                            <h5 class="fw-bold">{{ item.producto }}</h5>
+                                            <div class="d-flex align-items-center">
+                                                <p class="my-0 fs-5 fst-italic fw-bolder">Total: </p>&nbsp;&nbsp;&nbsp;
+                                                <p class="my-0 fs-5 fw-light">{{ item.PrecioV }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="my-auto ms-5" 
+                                    style="margin-right: 0%;">
+                                        <p class="my-0 fs-5 fst-italic fw-bolder">Puntos</p>
+                                        <p class="my-0 fs-5 fw-light">{{ item.puntos }}</p>
+                                    </div>
+
+                                    <div class="my-auto d-flex">
+                                        <button class="p-0 border-0" v-on:click="deleteSerPro(item.codigo)"><i class="fa-solid fa-circle-xmark fa-xl"></i></button>
+                                    </div>
+                                </div>
+                                
                             </div>
                         </div>
                         <div v-else>No hay servicios o productos registrados</div>
                     </div>
+                </div>
+
+                <div class="d-flex flex-wrap justify-content-around align-items-center">
+                    <div class="p-1 border ms-5 caja">
+                        <h6 class="border-bottom">Método de Pago</h6>
+                        <select class="form-select border-0 formato-inputs"
+                         v-model="registroVenta.metodoPago"
+                         v-on:change="cambiarMetodoPago">
+                            <option value="ef">Efectivo</option>
+                            <option value="pt">Puntos</option>
+                            <option value="nq">Nequi</option>
+                            <option value="dv">Daviplata</option>
+                            <option value="qr">Qr Bancolombia</option>
+                        </select>
+                    </div>
+
+                    <div class="p-1 border mx-auto caja text-center my-1">
+                        <h6 class="border-bottom">Efectivo</h6>
+                        <div class="input-group">
+                            <span class="input-group-text border">$</span>
+                            <input type="text"
+                             v-on:keyup="formatoNum"
+                             class="form-control border formato-inputs"
+                             maxlength="15"
+                             :disabled="(registroVenta.metodoPago !== 'ef')"
+                             v-model="filtro.efectivo" />
+                        </div>
+                    </div>
+
+                    <button type="button" style="height: 50px; width: 150px;"
+                     class="btn btn-success me-5"
+                     v-on:click="calcular">
+                        <h5 class="my-auto">Calcular</h5>
+                    </button>
                 </div>
                 
             </div>
@@ -129,6 +188,8 @@
 <script>
 import firebase from 'firebase'
 import { useStore } from 'vuex'
+import { auto } from '@popperjs/core';
+
 export default{
     data(){
         return{
@@ -147,15 +208,14 @@ export default{
                 cliente: "",
                 item: "",
                 identificador: null,
+                efectivo: "",
             },
             registroVenta: {
                 fecha:  new Date().toLocaleDateString(),
                 barbero: null,
                 cliente: null,
-                item: null,
-                puntos: null,
-                cantidad: "",
-                metodoPago: null,
+                items: [],
+                metodoPago: "ef",
                 total: 0,
             }
         }
@@ -258,6 +318,21 @@ export default{
             if(fecha[0].length === 1){fecha[0] = "0"+fecha[0]}
             this.registroVenta.fecha = fecha[2]+"-"+fecha[1]+"-"+fecha[0]
         },
+        formatoNum(){
+            var num = this.filtro.efectivo.replace(/\./g,'');
+            if(isNaN(num)){
+                this.$swal({
+                    icon: 'error',
+                    title: 'En este campo solo se permiten números'
+                })
+                this.filtro.efectivo = this.filtro.efectivo.replace(/[^\d\.]*/g,'');
+            }
+        },
+        cambiarMetodoPago(){
+            if(this.registroVenta.metodoPago !== "ef"){
+                this.filtro.efectivo = ""
+            }
+        },
         filtroEmpl(){
             var lista = []
             for(var i in this.empleadosList){
@@ -291,18 +366,18 @@ export default{
         selectEmple(empleado){
             // console.log(empleado)
             this.filtro.barbero = empleado.nombres+" "+empleado.apellidos
-            this.registroVenta.barbero = empleado.NoIdentificacion
+            this.registroVenta.barbero = empleado.nombres+" "+empleado.apellidos
             const lista = document.getElementById("list_empleados")
             lista.classList.add("hide")
         },
         selectCli(cliente){
             this.filtro.cliente = cliente.nombres+" "+cliente.apellidos
-            this.registroVenta.cliente = cliente.documento
+            this.registroVenta.cliente = cliente.nombres+" "+cliente.apellidos
             const lista = document.getElementById("list_clientes")
             lista.classList.add("hide")
         },
         selectSerPro(SerPro){
-            console.log(SerPro)
+            // console.log(SerPro)
             this.filtro.item = SerPro.producto
             this.carrito.push(SerPro)
             this.registroVenta.total += parseInt(SerPro.PrecioV.replaceAll(".",""))
@@ -316,12 +391,133 @@ export default{
             var lista = []
             for(var i in this.carrito){
                 if(this.carrito[i].codigo === codigo){
+                    this.registroVenta.total -= parseInt(this.carrito[i].PrecioV.replaceAll(".",""))
                     this.carrito.splice(i,1)
                     break;
                 }
             }
             this.$forceUpdate();
             // this.registroVenta.total -= parseInt(SerPro.PrecioV.replaceAll(".",""))
+        },
+        calcular(){
+            var errors = ""
+            if(this.registroVenta.barbero === null || this.registroVenta.cliente === null || this.carrito.length === 0
+            || (this.registroVenta.metodoPago === "ef" && this.filtro.efectivo === "")){
+                errors = "No puede haber campos vacíos en el formulario"
+            }
+
+            if(errors !== ""){
+                this.$swal({
+                    icon: 'error',
+                    title: errors
+                })
+            }
+            else{
+                var lista = []
+                for(var i in this.carrito){
+                    var item ={codigo: this.carrito[i].codigo, producto: this.carrito[i].producto, PrecioV: this.carrito[i].PrecioV}
+                    lista.push(item)
+                }
+                this.registroVenta.items = lista
+                console.log(this.registroVenta.items)
+                if(this.registroVenta.metodoPago === "pt"){
+                    console.log("Puntos Aun no implementado")
+                }
+                else if(this.registroVenta.metodoPago === "ef"){
+                    if(this.filtro.efectivo > this.registroVenta.total){
+                        var vueltas = this.filtro.efectivo -this.registroVenta.total
+                        this.$swal({
+                            icon: 'question',
+                            title: 'Registrar Venta?',
+                            text: 'Verifica que la información este bien',
+                            html: `
+                            <div class="d-flex border flex-column bd-highlight mb-3">
+                                <div class="p-2 bd-highlight border">
+                                    <div class="d-flex justify-content-around mb-2 p-0">
+                                        <div class="m-0">
+                                            <p class="border-bottom fst-italic m-0">Barbero</p>
+                                            <p class="my-1">`+this.registroVenta.barbero+`</p>
+                                        </div>
+                                        <div class="m-0">
+                                            <p class="border-bottom fst-italic m-0">Cliente</p>
+                                            <p class="my-1">`+this.registroVenta.cliente+`</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-around mb-2 p-0">
+                                        <div class="m-0">
+                                            <p class="border-bottom fst-italic m-0">Efectivo</p>
+                                            <p class="my-1">`+this.filtro.efectivo+`</p>
+                                        </div>
+                                        <div class="m-0">
+                                            <p class="border-bottom fst-italic m-0">Total</p>
+                                            <p class="my-1">`+this.registroVenta.total+`</p>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-around mb-2 p-0">
+                                        <div class="m-0">
+                                            <p class="border-bottom fst-italic m-0">A devolver</p>
+                                            <p class="my-1">`+vueltas+`</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            `,
+                            showCancelButton: true,
+                            confirmButtonText: 'Registrar Venta',
+                            cancelButtonText: 'Cancelar',
+                            reverseButtons: true
+                        }).then((result) => {
+                            this.$swal({
+                                allowEscapeKey: false,
+                                allowOutsideClick: false,
+                                width: auto,
+                                didOpen: () => {
+                                    this.$swal.showLoading();
+                                }
+                            })
+                            try{
+                                firebase
+                                    .firestore()
+                                    .collection("ventas")
+                                    .doc(this.registroVenta.fecha)
+                                    .set(this.registroVenta)
+                                    .then((result) => {
+                                        this.$swal.close();
+                                        this.registroVenta = {
+                                            fecha:  new Date().toLocaleDateString(),
+                                            barbero: null,
+                                            cliente: null,
+                                            items: [],
+                                            metodoPago: "ef",
+                                            total: 0,
+                                        }
+                                        this.filtro = {
+                                            barbero: "",
+                                            cliente: "",
+                                            item: "",
+                                            identificador: null,
+                                            efectivo: "",
+                                        }
+                                        this.carrito = []
+                                    })
+                            }catch(error){
+                                this.$swal({
+                                    icon: 'error',
+                                    text: error.message
+                                })
+                            }
+                        })
+                    }
+                    else{
+                        this.$swal({
+                            icon: 'error',
+                            title: 'El efectivo proporcionado no es suficiente'
+                        })
+                    }
+                    
+                }
+            }
         },
     },
     setup(){
