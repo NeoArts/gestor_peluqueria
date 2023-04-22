@@ -186,6 +186,17 @@ export default{
                       setTimeout(() => {
                         this.$router.push("/gestor")
                       }, 2000)
+                      this.$swal({
+                        title: 'Cargando...',
+                        text: 'Regalanos un momento',
+                        allowEscapeKey: false,
+                        allowOutsideClick: false,
+                        timer: 5000,
+                        timerProgressBar: true,
+                        didOpen: () => {
+                          this.$swal.showLoading();
+                        }
+                      })
                     }
                     if(this.store.state.user.rol === "caja"){
                       this.$router.push("/caja")
@@ -193,17 +204,7 @@ export default{
                   }
                 })
 
-              this.$swal({
-                title: 'Cargando...',
-                text: 'Regalanos un momento',
-                allowEscapeKey: false,
-                allowOutsideClick: false,
-                timer: 5000,
-                timerProgressBar: true,
-                didOpen: () => {
-                  this.$swal.showLoading();
-                }
-              })
+              
               // setTimeout(() => {
               //   this.$router.push("/gestor")
               // }, 2000)
