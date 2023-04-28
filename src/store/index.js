@@ -11,6 +11,7 @@ export default createStore({
         cliEdit: null,
         SerComponents: 0,
         serEdit: null,
+        CajaInv: 0,
 
     },
     mutations: {

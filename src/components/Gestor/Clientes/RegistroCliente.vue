@@ -309,7 +309,8 @@ export default{
                     .set({usuario})
                     .then(() => {
                         this.$swal.close()
-                        this.store.state.CliComponents = 0
+                        if(this.store.state.CliComponents !== 0){this.store.state.CliComponents = 0}
+                        else{this.store.state.CajaInv = 0}
                     })
             }catch(error){
                 this.$swal({

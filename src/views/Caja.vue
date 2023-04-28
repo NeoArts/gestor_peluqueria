@@ -182,17 +182,26 @@
             <div class="card" style="margin-left: 140px; margin-right: 140px; margin-top: 100px;">
                 <ul class="nav nav-pills nav-fill">
                     <li class="nav-item">
-                        <a class="nav-link active">Ventas</a>
+                        <a class="nav-link"
+                         :class="[(store.state.CajaInv === 0) ? 'active' : '']"
+                         v-on:click="cambiarComponente(0)">Ventas</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link">Registrar Cliente</a>
+                        <a class="nav-link"
+                         :class="[(store.state.CajaInv === 1) ? 'active' : '']"
+                         v-on:click="cambiarComponente(1)">Registrar Cliente</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link">Registrar Producto</a>
+                        <a class="nav-link"
+                         :class="[(store.state.CajaInv === 2) ? 'active' : '']"
+                         v-on:click="cambiarComponente(2)">Registrar Producto</a>
                     </li>
                 </ul>
                 <!-- <RegistroCliente /> -->
-                <VentasDia />
+
+                <VentasDia v-if="store.state.CajaInv === 0"/>
+                <RegistroCliente v-if="store.state.CajaInv === 1"/>
+                <Productos v-if="store.state.CajaInv === 2"/>
             </div>
         </div>
         
@@ -217,6 +226,7 @@ import { useStore } from 'vuex'
 import { auto } from '@popperjs/core';
 import RegistroCliente from '@/components/Gestor/Clientes/RegistroCliente.vue';
 import VentasDia from '@/components/Caja/VentasDia.vue';
+import Productos from '@/components/Gestor/Inventario/Productos.vue';
 
 export default{
     data() {
@@ -511,8 +521,10 @@ export default{
                     break;
                 }
             }
-            this.$forceUpdate();
             // this.registroVenta.total -= parseInt(SerPro.PrecioV.replaceAll(".",""))
+        },
+        cambiarComponente(index){
+            this.store.state.CajaInv = index
         },
         calcular() {
             var errors = "";
@@ -856,7 +868,8 @@ export default{
     },
     components: { 
         RegistroCliente,
-        VentasDia
+        VentasDia,
+        Productos
     }
 }
 </script>

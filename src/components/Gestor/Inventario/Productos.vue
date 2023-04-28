@@ -37,7 +37,7 @@
                                 <span v-on:click="aplicarSort(3)"><i class="fa-solid fa-arrow-down-a-z icono"></i></span>
                             </div>
                         </th>
-                        <th scope="col"></th>
+                        <th scope="col" v-if="store.state.user.rol !== 'caja'"></th>
                         <th scope="col"></th>
                     </tr>
                 </thead>
@@ -47,7 +47,7 @@
                         <td>{{ item.producto }}</td>
                         <td>{{ item.Cantidad }}</td>
                         <td>{{ item.PrecioV }}</td>
-                        <td><button class="p-0 border-0" v-on:click="edit(item)"><i class="fa-solid fa-pen-to-square"></i></button></td>
+                        <td v-if="store.state.user.rol !== 'caja'"><button class="p-0 border-0" v-on:click="edit(item)"><i class="fa-solid fa-pen-to-square"></i></button></td>
                         <td class="d-flex border-0 flex-wrap justify-content-around">
                             <button class="p-0 border-0" v-on:click="masProducto(item)"><i class="fa-solid fa-plus"></i></button>
                             <button class="p-0 border-0" v-on:click="menosProducto(item)"><i class="fa-solid fa-minus"></i></button>
