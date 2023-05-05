@@ -31,6 +31,10 @@
                                 v-for="bar in empleados"
                                 v-on:click="selectEmple(bar)">{{ bar.nombres }} {{ bar.apellidos }}</p>
                             </div>
+                            <!-- <select class="form-select border-0 formato-inputs"
+                             v-model="registroVenta.barbero" v-for="bar in empleados">
+                                <option >{{ bar.nombres }} {{ bar.apellidos }}</option>
+                            </select> -->
                         </div>
 
                         <div class="p-1 border mx-auto caja text-center my-1" id="contenedor_cliente">
@@ -166,6 +170,7 @@
                                 class="form-control border formato-inputs"
                                 maxlength="15"
                                 :disabled="(registroVenta.metodoPago !== 'ef')"
+                                v-on:keypress.enter="calcular"
                                 v-model="filtro.efectivo" />
                             </div>
                         </div>
@@ -227,6 +232,7 @@ import { auto } from '@popperjs/core';
 import RegistroCliente from '@/components/Gestor/Clientes/RegistroCliente.vue';
 import VentasDia from '@/components/Caja/VentasDia.vue';
 import Productos from '@/components/Gestor/Inventario/Productos.vue';
+//import Inventario from '@/components/Caja/Inventario.vue';
 
 export default{
     data() {
@@ -286,20 +292,6 @@ export default{
             this.formatoFecha(this.registroVenta.fecha);
             firebase
                 .firestore()
-                .collection("nomina")
-                .get()
-                .then((result) => {
-                var list = [];
-                for (var i in result.docs) {
-                    if (result.docs[i].data().usuario.rol !== "caja") {
-                        list.push(result.docs[i].data().usuario);
-                    }
-                }
-                this.empleados = list;
-                this.empleadosList = list;
-            });
-            firebase
-                .firestore()
                 .collection("items")
                 .get()
                 .then((result) => {
@@ -333,7 +325,22 @@ export default{
                     list.push(result.docs[i].data());
                 }
                 this.productosPuntos = list;
+                
+            });
+            firebase
+                .firestore()
+                .collection("nomina")
+                .get()
+                .then((result) => {
+                var list = [];
+                for (var i in result.docs) {
+                    if (result.docs[i].data().usuario.rol !== "caja") {
+                        list.push(result.docs[i].data().usuario);
+                    }
+                }
                 this.$swal.close();
+                this.empleados = list;
+                this.empleadosList = list;
             });
             this.mostrar = true;
         }
@@ -869,7 +876,8 @@ export default{
     components: { 
         RegistroCliente,
         VentasDia,
-        Productos
+        Productos,
+        // Inventario
     }
 }
 </script>
