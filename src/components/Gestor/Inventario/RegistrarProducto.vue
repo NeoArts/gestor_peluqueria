@@ -112,7 +112,7 @@ export default{
                 tipotamano: null,
                 PrecioC: "",
                 PrecioV: "",
-                Cantidad: 0,
+                Cantidad: "0",
             }
         }
     },

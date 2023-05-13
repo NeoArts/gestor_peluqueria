@@ -13,12 +13,19 @@
                 </div>
 
                 <div class="p-1 border mx-auto caja text-center my-1">
-                    <h6 class="border-bottom">Documento del Afiliado</h6>
+                    <h6 class="border-bottom">Afiliado</h6>
                     <input type="text"
+                    id="clienteInput"
                     class="form-control border-0 formato-inputs"
-                    maxlength="20"
-                    v-model="cliente.CodAfiliado" 
-                    v-on:keyup="format(1)"/>
+                    maxlength="30"
+                    v-on:keyup="filtroAfiliado"
+                    autocomplete="off"
+                    v-model="filtro"/>
+                    <div class="border contenedor_opciones hide" id="lista_clientes_input">
+                        <p class="my-1 opciones rounded mx-2"
+                        v-for="cli in clientes"
+                        v-on:click="selectAfiliado(cli)">{{ cli.nombres }} {{ cli.apellidos }}</p>
+                    </div>
                 </div>
 
                 <div class="p-1 border mx-auto caja text-center my-1">
@@ -39,15 +46,6 @@
                 </div>
 
                 <div class="p-1 border mx-auto caja text-center my-1">
-                    <h6 class="border-bottom">Edad</h6>
-                    <input type="text"
-                    class="form-control border-0 formato-inputs"
-                    maxlength="2"
-                    v-model="cliente.edad" 
-                    v-on:keyup="format(2)" />
-                </div>
-
-                <div class="p-1 border mx-auto caja text-center my-1">
                     <h6 class="border-bottom">Género</h6>
                     <select class="form-select border-0 formato-inputs"
                     v-model="cliente.genero">
@@ -56,8 +54,7 @@
                         <option value="o">Otro</option>
                     </select>
                 </div>
-            </div>
-            <div class="d-flex flex-wrap mb-3">
+
                 <div class="p-1 border mx-auto caja text-center my-1">
                     <h6 class="border-bottom">Telefono</h6>
                     <input type="text"
@@ -66,7 +63,8 @@
                     v-model="cliente.telefono" 
                     v-on:keyup="format(3)" />
                 </div>
-
+            </div>
+            <div class="d-flex flex-wrap mb-3">
                 <div class="p-1 border mx-auto caja text-center my-1">
                     <h6 class="border-bottom">Fecha de Nacimiento</h6>
                     <input type="date"
@@ -138,19 +136,56 @@ export default{
                 CodAfiliado: "",
                 nombres: "",
                 apellidos: "",
-                edad: "",
                 genero: null,
                 telefono: "",
                 correo: "",
                 rol: "cliente",
+                puntos: 0,
                 fechaNacimiento: ""
             },
             usuario:{
                 Password: "",
                 ConfPass: "",
             },
+            clientes: [],
+            clientesAux: [],
             pantallaGrande: ((window.innerWidth<1000) ? false : true),
+            filtro: "",
         }
+    },
+    beforeMount(){
+        this.$swal({
+            allowEscapeKey: false,
+            allowOutsideClick: false,
+            width: auto,
+            didOpen: () => {
+                this.$swal.showLoading();
+            }
+        })
+        try{
+            firebase
+                .firestore()
+                .collection("clientes")
+                .get()
+                .then((result) => {
+                    var lista = []
+                    for(var i in result.docs){
+                        lista.push(result.docs[i].data().usuario)
+                    }
+                    this.clientes = lista
+                    this.clientesAux = lista
+                    this.$swal.close()
+                })
+        }catch(error){
+            console.log(error)
+        }
+    },
+    mounted(){
+        const clientes = document.getElementById("clienteInput");
+        clientes.addEventListener("focusin", () => {
+            const lista = document.getElementById("lista_clientes_input");
+            lista.classList.remove("hide");
+        })
     },
     methods:{
         format(index){
@@ -184,16 +219,6 @@ export default{
                     this.cliente.CodAfiliado = this.cliente.CodAfiliado.replace(/[^\d\.]*/g,'');
                 }
             }
-            if(index === 2){
-                var num = this.cliente.edad.replace(/\./g,'');
-                if(isNaN(num)){
-                    this.$swal({
-                        icon: 'error',
-                        title: 'En este campo solo se permiten números'
-                    })
-                    this.cliente.edad = this.cliente.edad.replace(/[^\d\.]*/g,'');
-                }
-            }
             if(index === 3){
                 var num = this.cliente.telefono.replace(/\./g,'');
                 if(isNaN(num)){
@@ -204,6 +229,16 @@ export default{
                     this.cliente.telefono = this.cliente.telefono.replace(/[^\d\.]*/g,'');
                 }
             }
+        },
+        filtroAfiliado(){
+            var list = [];
+            for(var i in this.clientesAux){
+                var nombre = this.clientesAux[i].nombres+" "+this.clientesAux[i].apellidos;
+                if(this.clientesAux[i].documento.replaceAll(".","").includes(this.filtro) || nombre.toLowerCase().includes(this.filtro)){
+                    list.push(this.clientesAux[i])
+                }
+            }
+            this.clientes = list
         },
         cambiarTipo(index){
             if(index === 0){
@@ -233,8 +268,7 @@ export default{
             }
 
             if(this.cliente.documento === "" || this.cliente.nombres === "" || this.cliente.apellidos === "" ||
-            this.cliente.edad === "" || this.cliente.genero === null || this.cliente.telefono === "" ||
-            this.cliente.correo === "" ){
+            this.cliente.genero === null || this.cliente.telefono === "" || this.cliente.correo === "" ){
                 errors = "Revisa el formulario, no debe haber campos vacios"
             }
             console.log(errors)
@@ -272,6 +306,12 @@ export default{
                 return false;
             }
                 return true;
+        },
+        selectAfiliado(cli){
+            this.filtro = cli.nombres+" "+cli.apellidos;
+            this.cliente.CodAfiliado = cli.documento;
+            const lista = document.getElementById("lista_clientes_input");
+            lista.classList.add("hide");
         },
         async registrarCliente(correo, password){
             try{
@@ -332,7 +372,20 @@ export default{
 </script>
 
 <style>
-  .formato-inputs{
+.formato-inputs{
     text-align:center;
-  }
+}
+.hide{
+    display: none;
+}
+.opciones{
+    cursor: pointer;
+}
+.opciones:hover{
+    background-color: rgb(109, 109, 109);
+}
+.contenedor_opciones{
+    max-height: 115px;
+    overflow-y: scroll;
+}
 </style>

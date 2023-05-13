@@ -160,19 +160,19 @@ export default{
                     this.$swal.showLoading();
                 }
             })
-            item.Cantidad = item.Cantidad + 1
+            item.Cantidad = (parseInt(item.Cantidad) + 1)+"";
             firebase
                 .firestore()
                 .collection("items")
                 .doc(item.codigo)
                 .set(item)
                 .then((result) => {
-                    console.log(result)
+                    // console.log(result)
                     this.$swal.close()
                 })
         },
         menosProducto(item){
-            if(item.Cantidad > 0){
+            if(parseInt(item.Cantidad) > 0){
                 this.$swal({
                     allowEscapeKey: false,
                     allowOutsideClick: false,
@@ -181,7 +181,7 @@ export default{
                         this.$swal.showLoading();
                     }
                 })
-                item.Cantidad = item.Cantidad - 1
+                item.Cantidad = (parseInt(item.Cantidad) - 1)+"";
                 firebase
                     .firestore()
                     .collection("items")

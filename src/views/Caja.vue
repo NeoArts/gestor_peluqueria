@@ -4,6 +4,9 @@
             <div class="card" style="margin-left: 140px; margin-right: 140px; margin-top: 160px;">
                 <div class="card-header">
                     <h1 class="text-center">Galfersh Barber</h1>
+                    <button type="button" class="btn" v-on:click="recargar">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
                 </div>
                 <div class="card-body">
                     <div class="d-flex flex-wrap">
@@ -25,6 +28,7 @@
                             class="form-control border-0 formato-inputs"
                             maxlength="30"
                             v-on:keyup="filtroEmpl"
+                            autocomplete="off"
                             v-model="filtro.barbero"/>
                             <div class="border contenedor_opciones hide" id="list_empleados">
                                 <p class="my-1 opciones rounded mx-2" 
@@ -32,8 +36,8 @@
                                 v-on:click="selectEmple(bar)">{{ bar.nombres }} {{ bar.apellidos }}</p>
                             </div>
                             <!-- <select class="form-select border-0 formato-inputs"
-                             v-model="registroVenta.barbero" v-for="bar in empleados">
-                                <option >{{ bar.nombres }} {{ bar.apellidos }}</option>
+                             v-model="registroVenta.barbero">
+                                <option v-for="bar in empleados">{{ bar.nombres }} </option>
                             </select> -->
                         </div>
 
@@ -44,6 +48,7 @@
                             class="form-control border-0 formato-inputs"
                             maxlength="30"
                             v-on:keyup="filtroClie"
+                            autocomplete="off"
                             v-model="filtro.cliente"/>
                             <div class="border contenedor_opciones hide" id="list_clientes">
                                 <p class="my-1 opciones rounded mx-2" 
@@ -66,6 +71,7 @@
                                     class="form-control border-0 formato-inputs"
                                     maxlength="30"
                                     v-on:keyup="filtroSerPro"
+                                    autocomplete="off"
                                     v-model="filtro.item"/>
                                     <div class="contenedor_opciones hide" id="list_items">
                                         <p class="my-1 opciones rounded mx-2"
@@ -206,7 +212,7 @@
 
                 <VentasDia v-if="store.state.CajaInv === 0"/>
                 <RegistroCliente v-if="store.state.CajaInv === 1"/>
-                <Productos v-if="store.state.CajaInv === 2"/>
+                <InventarioCaja v-if="store.state.CajaInv === 2"/>
             </div>
         </div>
         
@@ -232,7 +238,7 @@ import { auto } from '@popperjs/core';
 import RegistroCliente from '@/components/Gestor/Clientes/RegistroCliente.vue';
 import VentasDia from '@/components/Caja/VentasDia.vue';
 import Productos from '@/components/Gestor/Inventario/Productos.vue';
-//import Inventario from '@/components/Caja/Inventario.vue';
+import InventarioCaja from '@/components/Caja/InventarioCaja.vue';
 
 export default{
     data() {
@@ -269,7 +275,7 @@ export default{
         };
     },
     beforeMount() {
-        console.log(this.store.state.user);
+        // console.log(this.store.state.user);
         if (this.store.state.user === null || this.store.state.user.rol === "barbero") {
             this.$swal({
                 icon: "error",
@@ -295,53 +301,55 @@ export default{
                 .collection("items")
                 .get()
                 .then((result) => {
-                var list = [];
-                for (var i in result.docs) {
-                    list.push(result.docs[i].data());
-                }
-                this.items = list;
-                this.itemsList = list;
-            });
-            firebase
-                .firestore()
-                .collection("clientes")
-                .get()
-                .then((result) => {
-                var list = [];
-                for (var i in result.docs) {
-                    list.push(result.docs[i].data().usuario);
-                }
-                this.clientes = list;
-                this.clientesList = list;
-                // console.log(this.clientes)
-            });
-            firebase
-                .firestore()
-                .collection("Puntos")
-                .get()
-                .then((result) => {
-                var list = [];
-                for (var i in result.docs) {
-                    list.push(result.docs[i].data());
-                }
-                this.productosPuntos = list;
-                
-            });
-            firebase
-                .firestore()
-                .collection("nomina")
-                .get()
-                .then((result) => {
-                var list = [];
-                for (var i in result.docs) {
-                    if (result.docs[i].data().usuario.rol !== "caja") {
-                        list.push(result.docs[i].data().usuario);
+                    var list = [];
+                    for (var i in result.docs) {
+                        list.push(result.docs[i].data());
                     }
-                }
-                this.$swal.close();
-                this.empleados = list;
-                this.empleadosList = list;
+                    this.items = list;
+                    this.itemsList = list;
+                    firebase
+                        .firestore()
+                        .collection("clientes")
+                        .get()
+                        .then((result) => {
+                            var list = [];
+                            for (var i in result.docs) {
+                                list.push(result.docs[i].data().usuario);
+                            }
+                            this.clientes = list;
+                            this.clientesList = list;
+                            firebase
+                                .firestore()
+                                .collection("Puntos")
+                                .get()
+                                .then((result) => {
+                                    var list = [];
+                                    for (var i in result.docs) {
+                                        list.push(result.docs[i].data());
+                                    }
+                                    this.productosPuntos = list;
+                                    firebase
+                                        .firestore()
+                                        .collection("nomina")
+                                        .get()
+                                        .then((result) => {
+                                            var list = [];
+                                            for (var i in result.docs) {
+                                                if (result.docs[i].data().usuario.rol !== "caja") {
+                                                    list.push(result.docs[i].data().usuario);
+                                                }
+                                            }
+                                            this.empleados = list;
+                                            this.empleadosList = list;
+                                            this.$swal.close();
+                                        
+                                    });
+                            });
+                    });
             });
+            
+            
+            
             this.mostrar = true;
         }
     },
@@ -466,7 +474,7 @@ export default{
         filtroSerPro() {
             var lista = [];
             for (var i in this.itemsList) {
-                if (this.itemsList[i].codigo.includes(this.filtro.item) || this.itemsList[i].producto.toLowerCase().includes(this.filtro.item)) {
+                if (this.itemsList[i].codigo.toLowerCase().includes(this.filtro.item) || this.itemsList[i].producto.toLowerCase().includes(this.filtro.item)) {
                     lista.push(this.itemsList[i]);
                 }
             }
@@ -533,17 +541,140 @@ export default{
         cambiarComponente(index){
             this.store.state.CajaInv = index
         },
+        recargar(){
+            // this.$swal({
+            //     allowEscapeKey: false,
+            //     allowOutsideClick: false,
+            //     width: auto,
+            //     didOpen: () => {
+            //         this.$swal.showLoading();
+            //     }
+            // });
+            // this.formatoFecha(this.registroVenta.fecha);
+            // firebase
+            //     .firestore()
+            //     .collection("items")
+            //     .get()
+            //     .then((result) => {
+            //         var list = [];
+            //         for (var i in result.docs) {
+            //             list.push(result.docs[i].data());
+            //         }
+            //         this.items = list;
+            //         this.itemsList = list;
+            //         firebase
+            //             .firestore()
+            //             .collection("clientes")
+            //             .get()
+            //             .then((result) => {
+            //                 var list = [];
+            //                 for (var i in result.docs) {
+            //                     list.push(result.docs[i].data().usuario);
+            //                 }
+            //                 this.clientes = list;
+            //                 this.clientesList = list;
+            //                 firebase
+            //                     .firestore()
+            //                     .collection("Puntos")
+            //                     .get()
+            //                     .then((result) => {
+            //                         var list = [];
+            //                         for (var i in result.docs) {
+            //                             list.push(result.docs[i].data());
+            //                         }
+            //                         this.productosPuntos = list;
+            //                         firebase
+            //                             .firestore()
+            //                             .collection("nomina")
+            //                             .get()
+            //                             .then((result) => {
+            //                                 var list = [];
+            //                                 for (var i in result.docs) {
+            //                                     if (result.docs[i].data().usuario.rol !== "caja") {
+            //                                         list.push(result.docs[i].data().usuario);
+            //                                     }
+            //                                 }
+            //                                 this.empleados = list;
+            //                                 this.empleadosList = list;
+            //                                 this.$swal.close();
+                                        
+            //                         });
+            //                 });
+            //         });
+            // });
+            
+            
+            
+            // this.mostrar = true;
+        },
         calcular() {
             var errors = "";
+            
+            var productos = [];
+            var NoDisponibles = [];
+            for(var i in this.carrito){
+                if(this.carrito[i].identificador === "pr"){
+                    var aux = false;
+                    for(var j in productos){
+                        if(productos[j].codigo === this.carrito[i].codigo){
+                            if(this.carrito[i].Cantidad < 1){
+                                NoDisponibles.push(this.carrito[i])
+                            }
+                            else{
+                                aux = true;
+                                this.carrito[i].Cantidad = (parseInt(this.carrito[i].Cantidad)-1)+"";
+                                productos[j].Cantidad = this.carrito[i].Cantidad;
+                                break;
+                            }
+                        }
+                    }
+                    if(!aux){
+                        if(this.carrito[i].Cantidad < 1){
+                            NoDisponibles.push(this.carrito[i])
+                        }
+                        else{
+                            this.carrito[i].Cantidad = (parseInt(this.carrito[i].Cantidad)-1)+"";
+                            productos.push(this.carrito[i])
+                        }
+                    }
+                }
+            }
+
+            var DiezPorsiento = false;
+            var clienteDiezPorsiento = null;
+            if(this.registroVenta.cliente.CodAfiliado !== ""){
+                DiezPorsiento = true;
+                for(var i in this.clientesList){
+                    if(this.clientesList[i].documento === this.registroVenta.cliente.CodAfiliado){
+                        clienteDiezPorsiento = this.clientesList[i];
+                    }
+                }
+            }
+            // clienteDiezPorsiento.puntos = this.registroVenta.cliente.puntos;
+            // console.log(clienteDiezPorsiento);
+
+            for(var i in NoDisponibles){
+                errors += NoDisponibles[i].producto+"\n";
+            }
+            if(errors!==""){
+                errors += "Los productos anteriormente mencionados no estan disponibles";
+            }
+
             if (this.registroVenta.barbero === null || this.registroVenta.cliente === null || this.carrito.length === 0
                 || (this.registroVenta.metodoPago === "ef" && this.filtro.efectivo === "")) {
                 errors = "No puede haber campos vacíos en el formulario";
             }
+
             if (errors !== "") {
                 this.$swal({
                     icon: "error",
                     title: errors
                 });
+                for(var i in this.carrito){
+                    if(this.carrito[i].identificador === "pr"){
+                        this.carrito[i].Cantidad = (parseInt(this.carrito[i].Cantidad)+1)+"";
+                    }   
+                }
             }
             else {
                 var lista = [];
@@ -611,7 +742,7 @@ export default{
                                     firebase
                                         .firestore()
                                         .collection("ventas")
-                                        .doc()
+                                        .doc("("+this.registroVenta.fecha+")-("+this.registroVenta.hora+")"+"("+this.registroVenta.cliente.documento+")")
                                         .set(this.registroVenta)
                                         .then((result) => {
                                             var usuario = this.registroVenta.cliente
@@ -622,6 +753,16 @@ export default{
                                                 .doc(usuario.documento)
                                                 .set({ usuario })
                                                 .then(() => {
+                                                    for(var i in productos){
+                                                        firebase
+                                                            .firestore()
+                                                            .collection("items")
+                                                            .doc(productos[i].codigo)
+                                                            .set(productos[i])
+                                                            .then(() => {
+                                                                
+                                                            })
+                                                    }
                                                     this.$swal.close();
                                                 });
                                             this.registroVenta = {
@@ -648,6 +789,12 @@ export default{
                                         icon: "error",
                                         text: error.message
                                     });
+                                }
+                            }else{
+                                for(var i in this.carrito){
+                                    if(this.carrito[i].identificador === "pr"){
+                                        this.carrito[i].Cantidad = (parseInt(this.carrito[i].Cantidad)+1)+"";
+                                    }   
                                 }
                             }
                         })
@@ -712,42 +859,67 @@ export default{
                                     firebase
                                         .firestore()
                                         .collection("ventas")
-                                        .doc()
+                                        .doc("("+this.registroVenta.fecha+")-("+this.registroVenta.hora+")"+"("+this.registroVenta.cliente.documento+")")
                                         .set(this.registroVenta)
                                         .then((result) => {
-                                        var usuario = this.registroVenta.cliente;
-                                        if (usuario.puntos === undefined) {
-                                            usuario.puntos = this.registroVenta.puntos;
-                                        }
-                                        else {
-                                            usuario.puntos += (this.registroVenta.puntos);
-                                        }
-                                        firebase
-                                            .firestore()
-                                            .collection("clientes")
-                                            .doc(usuario.documento)
-                                            .set({ usuario })
-                                            .then(() => {
-                                            this.$swal.close();
-                                        });
-                                        this.registroVenta = {
-                                            fecha: new Date().toLocaleDateString(),
-                                            barbero: null,
-                                            cliente: null,
-                                            items: [],
-                                            metodoPago: "ef",
-                                            puntos: 0,
-                                            total: 0,
-                                        };
-                                        this.formatoFecha(this.registroVenta.fecha);
-                                        this.filtro = {
-                                            barbero: "",
-                                            cliente: "",
-                                            item: "",
-                                            identificador: null,
-                                            efectivo: "",
-                                        };
-                                        this.carrito = [];
+                                            var usuario = this.registroVenta.cliente;
+                                            if (usuario.puntos === undefined) {
+                                                usuario.puntos = this.registroVenta.puntos;
+                                            }
+                                            else {
+                                                usuario.puntos += (this.registroVenta.puntos);
+                                            }
+                                            if(DiezPorsiento){
+                                                clienteDiezPorsiento.puntos += usuario.puntos * 0.1; 
+                                            }
+                                            firebase
+                                                .firestore()
+                                                .collection("clientes")
+                                                .doc(usuario.documento)
+                                                .set({ usuario })
+                                                .then(() => {
+                                                    for(var i in productos){
+                                                        firebase
+                                                            .firestore()
+                                                            .collection("items")
+                                                            .doc(productos[i].codigo)
+                                                            .set(productos[i])
+                                                            .then(() => {
+                                                            });
+                                                    }
+                                                    if(DiezPorsiento){
+                                                        usuario = clienteDiezPorsiento
+                                                        firebase
+                                                            .firestore()
+                                                            .collection("clientes")
+                                                            .doc(clienteDiezPorsiento.documento)
+                                                            .set({usuario})
+                                                            .then(() => {
+                                                                this.$swal.close();
+                                                            })
+                                                    }
+                                                    else{
+                                                        this.$swal.close();
+                                                    }
+                                            });
+                                            this.registroVenta = {
+                                                fecha: new Date().toLocaleDateString(),
+                                                barbero: null,
+                                                cliente: null,
+                                                items: [],
+                                                metodoPago: "ef",
+                                                puntos: 0,
+                                                total: 0,
+                                            };
+                                            this.formatoFecha(this.registroVenta.fecha);
+                                            this.filtro = {
+                                                barbero: "",
+                                                cliente: "",
+                                                item: "",
+                                                identificador: null,
+                                                efectivo: "",
+                                            };
+                                            this.carrito = [];
                                     });
                                 }
                                 catch (error) {
@@ -755,6 +927,13 @@ export default{
                                         icon: "error",
                                         text: error.message
                                     });
+                                }
+                            }
+                            else{
+                                for(var i in this.carrito){
+                                    if(this.carrito[i].identificador === "pr"){
+                                        this.carrito[i].Cantidad = (parseInt(this.carrito[i].Cantidad)+1)+"";
+                                    }   
                                 }
                             }
                         });
@@ -817,7 +996,7 @@ export default{
                                 firebase
                                     .firestore()
                                     .collection("ventas")
-                                    .doc()
+                                    .doc("("+this.registroVenta.fecha+")-("+this.registroVenta.hora+")"+"("+this.registroVenta.cliente.documento+")")
                                     .set(this.registroVenta)
                                     .then((result) => {
                                     var usuario = this.registroVenta.cliente;
@@ -827,13 +1006,38 @@ export default{
                                     else {
                                         usuario.puntos += (this.registroVenta.puntos);
                                     }
+                                    if(DiezPorsiento){
+                                        clienteDiezPorsiento.puntos += usuario.puntos * 0.1; 
+                                    }
                                     firebase
                                         .firestore()
                                         .collection("clientes")
                                         .doc(usuario.documento)
                                         .set({ usuario })
                                         .then(() => {
-                                        this.$swal.close();
+                                            for(var i in productos){
+                                                firebase
+                                                    .firestore()
+                                                    .collection("items")
+                                                    .doc(productos[i].codigo)
+                                                    .set(productos[i])
+                                                    .then(() => {
+                                                    });
+                                            }
+                                            if(DiezPorsiento){
+                                                usuario = clienteDiezPorsiento
+                                                firebase
+                                                    .firestore()
+                                                    .collection("clientes")
+                                                    .doc(clienteDiezPorsiento.documento)
+                                                    .set({clienteDiezPorsiento})
+                                                    .then(() => {
+                                                        this.$swal.close();
+                                                    })
+                                            }
+                                            else{
+                                                this.$swal.close();
+                                            }
                                     });
                                     this.registroVenta = {
                                         fecha: new Date().toLocaleDateString(),
@@ -862,6 +1066,13 @@ export default{
                                 });
                             }
                         }
+                        else{
+                            for(var i in this.carrito){
+                                if(this.carrito[i].identificador === "pr"){
+                                    this.carrito[i].Cantidad = (parseInt(this.carrito[i].Cantidad)+1)+"";
+                                }   
+                            }
+                        }
                     });
                 }
             }
@@ -877,7 +1088,7 @@ export default{
         RegistroCliente,
         VentasDia,
         Productos,
-        // Inventario
+        InventarioCaja,
     }
 }
 </script>

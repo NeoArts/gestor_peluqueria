@@ -27,7 +27,7 @@
                         </th>
                         <th scope="col">
                             <div class="d-flex justify-content-between align-items-center">
-                                Edad
+                                Fecha de nacimiento
                                 <span v-on:click="aplicarSort(2)"><i class="fa-solid fa-arrow-down-1-9 icono"></i></span>
                             </div>
                         </th>
@@ -44,7 +44,7 @@
                     <tr style="vertical-align: middle;">
                         <th scope="row">{{ cliente.documento }}</th>
                         <td>{{ cliente.nombres }} {{ cliente.apellidos }}</td>
-                        <td>{{ cliente.edad }}</td>
+                        <td>{{ cliente.fechaNacimiento }}</td>
                         <td>{{ cliente.correo }}</td>
                         <td>
                             <button class="p-0 border-0" v-on:click="editar(cliente)">
@@ -108,6 +108,7 @@ export default{
                     }
                     this.clientes = lista
                     this.clientesAux = lista
+                    // console.log(this.clientes)
                     this.mostrar = true
                     this.$swal.close()
                 })
@@ -168,10 +169,10 @@ export default{
             }
             if(index === 2){
                 this.clientes.sort(function(a, b){
-                    if(a.edad >  b.edad){
+                    if(a.fechaNacimiento >  b.fechaNacimiento){
                         return 1;
                     }
-                    if (a.edad < b.edad) {
+                    if (a.fechaNacimiento < b.fechaNacimiento) {
                         return -1;
                     }
                     return 0;
