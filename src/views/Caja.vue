@@ -216,15 +216,43 @@
             </div>
         </div>
         
-
-        <div v-else class="card mx-5" style="margin-top: 100px;">
-            <div class="card-header">
-                Featured
+        <div v-else>
+            <div class="card mx-5" style="margin-top: 100px;">
+                <div class="card-header">
+                    <h1 class="text-center">Galfersh Barber</h1>
+                    <button type="button" class="btn" v-on:click="recargar">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Special title treatment</h5>
+                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
             </div>
-            <div class="card-body">
-                <h5 class="card-title">Special title treatment</h5>
-                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
+            <div class="card">
+                <ul class="nav nav-pills nav-fill">
+                    <li class="nav-item">
+                        <a class="nav-link"
+                         :class="[(store.state.CajaInv === 0) ? 'active' : '']"
+                         v-on:click="cambiarComponente(0)">Ventas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                         :class="[(store.state.CajaInv === 1) ? 'active' : '']"
+                         v-on:click="cambiarComponente(1)">Registrar Cliente</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                         :class="[(store.state.CajaInv === 2) ? 'active' : '']"
+                         v-on:click="cambiarComponente(2)">Registrar Producto</a>
+                    </li>
+                </ul>
+                <!-- <RegistroCliente /> -->
+
+                <VentasDia v-if="store.state.CajaInv === 0"/>
+                <RegistroCliente v-if="store.state.CajaInv === 1"/>
+                <InventarioCaja v-if="store.state.CajaInv === 2"/>
             </div>
         </div>
     </div>
@@ -542,14 +570,42 @@ export default{
             this.store.state.CajaInv = index
         },
         recargar(){
-            // this.$swal({
-            //     allowEscapeKey: false,
-            //     allowOutsideClick: false,
-            //     width: auto,
-            //     didOpen: () => {
-            //         this.$swal.showLoading();
-            //     }
-            // });
+            this.$swal({
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                width: auto,
+                didOpen: () => {
+                    this.$swal.showLoading();
+                }
+            });
+            firebase
+                .firestore()
+                .collection("clientes")
+                .get()
+                .then((result) => {
+                    var list = [];
+                    for(var i in result.docs){
+                        list.push(result.docs[i].data().usuario);
+                    }
+                    this.clientes = list;
+                    this.clientesList = list;
+                    firebase
+                        .firestore()
+                        .collection("items")
+                        .get()
+                        .then((result) => {
+                            list = [];
+                            for(var i in result.docs){
+                                list.push(result.docs[i].data());
+                            }
+                            this.items = list;
+                            this.itemsList = list;
+                            this.carrito = [];
+                            this.registroVenta.total = 0
+                            this.registroVenta.puntos = 0
+                            this.$swal.close();
+                        })
+                })
             // this.formatoFecha(this.registroVenta.fecha);
             // firebase
             //     .firestore()
@@ -639,14 +695,18 @@ export default{
                     }
                 }
             }
+            // console.log(productos)
+            // console.log(NoDisponibles)
 
             var DiezPorsiento = false;
             var clienteDiezPorsiento = null;
-            if(this.registroVenta.cliente.CodAfiliado !== ""){
-                DiezPorsiento = true;
-                for(var i in this.clientesList){
-                    if(this.clientesList[i].documento === this.registroVenta.cliente.CodAfiliado){
-                        clienteDiezPorsiento = this.clientesList[i];
+            if(this.registroVenta.cliente !== null){
+                if(this.registroVenta.cliente.CodAfiliado !== ""){
+                    DiezPorsiento = true;
+                    for(var i in this.clientesList){
+                        if(this.clientesList[i].documento === this.registroVenta.cliente.CodAfiliado){
+                            clienteDiezPorsiento = this.clientesList[i];
+                        }
                     }
                 }
             }
@@ -670,11 +730,14 @@ export default{
                     icon: "error",
                     title: errors
                 });
-                for(var i in this.carrito){
-                    if(this.carrito[i].identificador === "pr"){
-                        this.carrito[i].Cantidad = (parseInt(this.carrito[i].Cantidad)+1)+"";
+                for(var i in productos){
+                    for(var j in this.carrito){
+                        if(this.carrito[j].codigo === productos[i].codigo){
+                            this.carrito[i].Cantidad = (parseInt(this.carrito[i].Cantidad)+1)+"";
+                        }
                     }   
                 }
+                console.log(this.carrito)
             }
             else {
                 var lista = [];
@@ -683,7 +746,7 @@ export default{
                     lista.push(item);
                 }
                 this.registroVenta.items = lista;
-                console.log(this.registroVenta.items);
+                // console.log(this.registroVenta.items);
                 if (this.registroVenta.metodoPago === "pt") {
                     if(this.registroVenta.cliente.puntos < this.registroVenta.total){
                         this.$swal({
@@ -870,7 +933,8 @@ export default{
                                                 usuario.puntos += (this.registroVenta.puntos);
                                             }
                                             if(DiezPorsiento){
-                                                clienteDiezPorsiento.puntos += usuario.puntos * 0.1; 
+                                                clienteDiezPorsiento.puntos += usuario.puntos * 0.1;
+                                                clienteDiezPorsiento.puntosReferidos += usuario.puntos * 0.1;
                                             }
                                             firebase
                                                 .firestore()

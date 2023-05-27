@@ -20,7 +20,7 @@
          @input="pickFile"
          accept="image/*"/>
     </div>
-    <div class="d-flex m-3 justify-content-around">
+    <div class="d-flex m-3 justify-content-around flex-wrap">
         <div class="p-1 border mx-auto caja text-center my-1"
          style="width: 250px; border-radius: 5px;">
             <h6 class="border-bottom">Productos</h6>
@@ -41,22 +41,31 @@
 
         <div class="p-1 border mx-auto caja text-center my-1">
             <h6 class="border-bottom">Cantidad</h6>
+            <input type="text"
+             v-on:keyup="formatoNum(0)"
+             class="form-control border-0 formato-inputs"
+             maxlength="3"
+             v-model="cantidad" />
+        </div>
+
+        <div class="p-1 border mx-auto caja text-center my-1">
+            <h6 class="border-bottom">Precio de Compra</h6>
             <div class="input-group">
                 <span class="input-group-text border">$</span>
                 <input type="text"
-                 v-on:keyup="formatoNum"
+                 v-on:keyup="formatoNum(1)"
                  class="form-control border formato-inputs"
-                 maxlength="5"
-                 v-model="cantidad" />
+                 maxlength="8"
+                 v-model="precio" />
             </div>
         </div>
-
+    </div>
+    <div class="d-flex m-0 justify-content-around">
         <button class="btn btn-success my-4"
          v-on:click="submitForm"
          style="height: 50px;">
             <h6 class="my-auto">Registrar Compra</h6>
         </button>
-
     </div>
     
     
@@ -106,6 +115,7 @@ export default{
             item: "",
             producto: null,
             cantidad: "",
+            precio: "",
             previewImage: null,
             image: null,
         }
@@ -126,15 +136,32 @@ export default{
             const lista = document.getElementById("list_productos")
             lista.classList.add("hide");
         },
-        formatoNum() {
-            var num = this.cantidad.replace(/\./g, "");
-            if (isNaN(num)) {
-                this.$swal({
-                    icon: "error",
-                    title: "En este campo solo se permiten números"
-                });
-                this.cantidad = this.cantidad.replace(/[^\d\.]*/g, "");
+        formatoNum(index) {
+            if(index === 0){
+                var num = this.cantidad.replace(/\./g, "");
+                if (isNaN(num)) {
+                    this.$swal({
+                        icon: "error",
+                        title: "En este campo solo se permiten números"
+                    });
+                    this.cantidad = this.cantidad.replace(/[^\d\.]*/g, "");
+                }
             }
+            if(index === 1){
+                var num = this.precio.replace(/\./g, "");
+                if(!isNaN(num)){
+                    num = num.toString().split('').reverse().join('').replace(/(?=\d*\.?)(\d{3})/g,'$1.');
+                    num = num.split('').reverse().join('').replace(/^[\.]/,'');
+                    this.precio = num;
+                }else{
+                    this.$swal({
+                        icon: 'error',
+                        title: 'En este campo solo se permiten números'
+                    })
+                    this.precio = this.precio.replace(/[^\d\.]*/g,'');
+                }
+            }
+            
         },
         selectImage(){
             this.$refs.fileInput.click()
@@ -158,7 +185,7 @@ export default{
             if(this.previewImage === null){
                 errors = "No se detectó la imagen de la factura";
             }
-            if(this.producto === null || this.cantidad === ""){
+            if(this.producto === null || this.cantidad === "" || this.precio === ""){
                 errors = "Se detectaron campos vacíos en el formulario";
             }
 
@@ -180,10 +207,16 @@ export default{
 
                 var cantidad = this.producto.Cantidad;
                 this.producto.Cantidad = (parseInt(this.producto.Cantidad)+parseInt(this.cantidad))+"";
-                // console.log(this.producto.Cantidad);
+
+                var PrecioC = parseInt(this.precio.replaceAll(".","")) / this.cantidad;
+                PrecioC = (PrecioC).toString().split('').reverse().join('').replace(/(?=\d*\.?)(\d{3})/g,'$1.');
+                PrecioC = PrecioC.split('').reverse().join('').replace(/^[\.]/,'');
+                
+                this.producto.PrecioC = PrecioC;
                 var compra = {
                     codigo: this.producto.codigo,
                     producto: this.producto.producto,
+                    precio: this.precio,
                     cantidadAnterior: cantidad,
                     cantidadPosterior: this.producto.Cantidad,
                     fecha: new Date().toLocaleDateString("fr-CA"),
@@ -214,6 +247,7 @@ export default{
                                             this.item= "";
                                             this.producto= null;
                                             this.cantidad= "";
+                                            this.precio = "";
                                             this.previewImage= null;
                                             this.image= null;
                                         })

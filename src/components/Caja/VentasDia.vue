@@ -1,6 +1,6 @@
 <template>
-    <div class="container_blanco">
-        <div class="p-3 border d-flex justify-content-between border">
+    <div class="container_blanco" ref="container">
+        <div class="p-3 border d-flex justify-content-between border flex-wrap">
             <div class="p-1 border caja text-center my-1">
                 <h6 class="border-bottom">Fecha</h6>
                 <input 
@@ -18,7 +18,7 @@
             </button>
         </div>
         
-        <div class="table-responsive" v-if="mostrar" :style="{maxHeight: '250px'}">
+        <div class="table-responsive mx-auto" v-if="mostrar" :style="{maxHeight: '250px', maxWidth: computedMaxWidth}">
             <table class="table table-bordered table-hover" >
                 <thead>
                     <tr class="table-dark">
@@ -52,7 +52,6 @@
                                 <span v-on:click="aplicarSort(4)"><i class="fa-solid fa-arrow-down-1-9 icono"></i></span>
                             </div>
                         </th>
-                        <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody v-for="venta in ventas">
@@ -66,7 +65,9 @@
                         <td v-if="venta.metodoPago === 'qr'">{{ venta.total }} QR bancolombia</td>
                         <td v-if="venta.metodoPago === 'pt'">{{ venta.total }} Puntos</td>
                         <td v-if="venta.metodoPago === 'dv'">{{ venta.total }} Davivienda</td>
+
                         <!-- <td >{{ venta.total }} {{ venta.metodoPago }}</td> -->
+
                     </tr>
                 </tbody>
             </table>
@@ -81,6 +82,7 @@ import { useStore } from 'vuex';
 export default{
 
     beforeMount(){
+        this.calculateMaxWidth();
         this.$swal({
             allowEscapeKey: false,
             allowOutsideClick: false,
@@ -162,12 +164,21 @@ export default{
         // }
         
     },
+    mounted(){
+        this.$nextTick(() => {
+            window.addEventListener("resize", this.calculateMaxWidth);
+        });
+    },
+    beforeUnmount(){
+        window.removeEventListener('resize', this.calculateMaxWidth);
+    },
     data(){
         return{
             ventas: [],
             ventasLista: [],
             mostrar: false,
             filtro: null,
+            computedMaxWidth: null,
         }
     },
     setup(){
@@ -178,6 +189,13 @@ export default{
         }
     },
     methods:{
+        calculateMaxWidth() {
+            // console.log("UwU")
+            const containerWidth = window.outerWidth - 40;
+
+            this.computedMaxWidth = `${containerWidth}px`;
+            // console.log(`${containerWidth}px`);
+        },
         recargar(){
             this.filtro = "";
             this.$swal({

@@ -10,7 +10,7 @@
             <p class="my-auto fw-bold">Ingresa el nombre del Cliente</p>
         </div>
         <div class="table-responsive" v-if="mostrar" :style="{maxHeight: '250px'}">
-            <table class="table table-bordered" >
+            <table class="table table-bordered table-hover" >
                 <thead>
                     <tr class="table-dark">
                         <th scope="col">
@@ -33,7 +33,7 @@
                         </th>
                         <th scope="col">
                             <div class="d-flex justify-content-between align-items-center">
-                                Correo
+                                Puntos de Referido
                                 <span v-on:click="aplicarSort(3)"><i class="fa-solid fa-arrow-down-a-z icono"></i></span>
                             </div>
                         </th>
@@ -45,7 +45,7 @@
                         <th scope="row">{{ cliente.documento }}</th>
                         <td>{{ cliente.nombres }} {{ cliente.apellidos }}</td>
                         <td>{{ cliente.fechaNacimiento }}</td>
-                        <td>{{ cliente.correo }}</td>
+                        <td>{{ cliente.puntosReferidos }}</td>
                         <td>
                             <button class="p-0 border-0" v-on:click="editar(cliente)">
                                 <i class="fa-solid fa-user-pen icono" ></i>
@@ -180,10 +180,10 @@ export default{
             }
             if(index === 3){
                 this.clientes.sort(function(a, b){
-                    if(a.correo >  b.correo){
+                    if(a.puntosReferidos >  b.puntosReferidos){
                         return 1;
                     }
-                    if (a.correo < b.correo) {
+                    if (a.puntosReferidos < b.puntosReferidos) {
                         return -1;
                     }
                     return 0;

@@ -141,6 +141,7 @@ export default{
                 correo: "",
                 rol: "cliente",
                 puntos: 0,
+                puntosReferidos: 0,
                 fechaNacimiento: ""
             },
             usuario:{

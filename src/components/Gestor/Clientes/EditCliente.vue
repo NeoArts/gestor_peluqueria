@@ -66,6 +66,15 @@
             </div>
             <div class="d-flex flex-wrap mb-3">
                 <div class="p-1 border mx-auto caja text-center my-1">
+                    <h6 class="border-bottom">puntos</h6>
+                    <input type="text"
+                    class="form-control border-0 formato-inputs"
+                    maxlength="4"
+                    v-model="cliente.puntos" 
+                    v-on:keyup="format(4)" />
+                </div>
+
+                <div class="p-1 border mx-auto caja text-center my-1">
                     <h6 class="border-bottom">Fecha de Nacimiento</h6>
                     <input type="date"
                      class="form-control border-0 mt-0"
@@ -206,6 +215,16 @@ export default{
                     this.cliente.telefono = this.cliente.telefono.replace(/[^\d\.]*/g,'');
                 }
             }
+            if(index === 4){
+                var num = this.cliente.puntos.replace(/\./g,'');
+                if(isNaN(num)){
+                    this.$swal({
+                        icon: 'error',
+                        title: 'En este campo solo se permiten números'
+                    })
+                    this.cliente.puntos = this.cliente.puntos.replace(/[^\d\.]*/g,'');
+                }
+            }
         },
         filtroAfiliado(){
             var list = [];
@@ -283,6 +302,7 @@ export default{
             }
         },
         async registrarUsuario(usuario){
+            usuario.puntos = parseInt(usuario.puntos)
             try{
                 await firebase
                     .firestore()

@@ -21,6 +21,7 @@
               <router-link to="/gestor/empleados" class="nav-link active link_pg border border-bottom-0" :class="{ link_pg_activo: (this.$route.path === '/gestor/empleados') }">Empleados</router-link>
               <router-link to="/gestor/inventario" class="nav-link active link_pg border border-bottom-0" :class="{ link_pg_activo: (this.$route.path === '/gestor/inventario') }">Inventario</router-link>
               <router-link to="/gestor/servicios" class="nav-link active link_pg border border-bottom-0" :class="{ link_pg_activo: (this.$route.path === '/gestor/servicios') }">Servicios</router-link>
+              <router-link to="/gestor/compras" class="nav-link active link_pg border border-bottom-0" :class="{ link_pg_activo: (this.$route.path === '/gestor/compras') }">Compras</router-link>
             </nav>
             <router-view></router-view>
           </div>
@@ -39,11 +40,12 @@
             {{ link_act }}
           </button>
           <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-            <li><button class="dropdown-item" type="button" v-on:click="cambiarLink('Home')"><router-link to="/gestor" class="link_pp text-decoration-none">Caja</router-link></button></li>
+            <li><button class="dropdown-item" type="button" v-on:click="cambiarLink('Caja')"><router-link to="/gestor" class="link_pp text-decoration-none">Caja</router-link></button></li>
             <li><button class="dropdown-item" type="button" v-on:click="cambiarLink('Clientes')"><router-link to="/gestor/clientes" class="link_pp text-decoration-none">Clientes</router-link></button></li>
             <li><button class="dropdown-item" type="button" v-on:click="cambiarLink('Empleados')"><router-link to="/gestor/empleados" class="link_pp text-decoration-none">Empleados</router-link></button></li>
             <li><button class="dropdown-item" type="button" v-on:click="cambiarLink('Inventario')"><router-link to="/gestor/inventario" class="link_pp text-decoration-none">Inventario</router-link></button></li>
             <li><button class="dropdown-item" type="button" v-on:click="cambiarLink('Servicios')"><router-link to="/gestor/servicios" class="link_pp text-decoration-none">Servicios</router-link></button></li>
+            <li><button class="dropdown-item" type="button" v-on:click="cambiarLink('Compras')"><router-link to="/gestor/compras" class="link_pp text-decoration-none">Compras</router-link></button></li>
           </ul>
         </div>
 

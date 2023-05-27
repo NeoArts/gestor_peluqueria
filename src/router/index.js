@@ -45,6 +45,10 @@ const routes = [
       {
         path: 'servicios',
         component: () => import("../components/Gestor/Servicios.vue")
+      },
+      {
+        path: 'compras',
+        component: () => import("../components/Gestor/Compras.vue")
       }
     ]
   },
