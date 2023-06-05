@@ -13,6 +13,12 @@
                  v-model="filtro"/>
             </div>
 
+            <div>
+                <div class="d-flex align-items-center"><div class="border" style="height: 13px; width: 13px; background-color: aqua;"></div>&nbsp; Servicios</div>
+                <div class="d-flex align-items-center"><div class="border" style="height: 13px; width: 13px; background-color: lightcoral;"></div>&nbsp; Productos</div>
+                <div class="d-flex align-items-center"><div class="border" style="height: 13px; width: 13px; background-color: lightgreen;"></div>&nbsp; Mixto</div>
+            </div>
+
             <button type="button" class="btn" v-on:click="recargar">
                 <i class="fa-solid fa-rotate-right"></i>
             </button>
@@ -55,7 +61,7 @@
                     </tr>
                 </thead>
                 <tbody v-for="venta in ventas">
-                    <tr style="vertical-align: middle;" v-on:click="seleccionado(venta)">
+                    <tr v-if="colorVenta(venta.items) === 'sv'" style="vertical-align: middle; background-color: aqua;" v-on:click="seleccionado(venta)">
                         <td>{{ venta.fecha }}</td>
                         <td>{{ venta.hora }}</td>
                         <td>{{ venta.barbero }}</td>
@@ -65,9 +71,28 @@
                         <td v-if="venta.metodoPago === 'qr'">{{ venta.total }} QR bancolombia</td>
                         <td v-if="venta.metodoPago === 'pt'">{{ venta.total }} Puntos</td>
                         <td v-if="venta.metodoPago === 'dv'">{{ venta.total }} Davivienda</td>
-
-                        <!-- <td >{{ venta.total }} {{ venta.metodoPago }}</td> -->
-
+                    </tr>
+                    <tr v-if="colorVenta(venta.items) === 'pr'" style="vertical-align: middle; background-color: lightcoral;" v-on:click="seleccionado(venta)">
+                        <td>{{ venta.fecha }}</td>
+                        <td>{{ venta.hora }}</td>
+                        <td>{{ venta.barbero }}</td>
+                        <td>{{ venta.cliente.nombres }} {{ venta.cliente.apellidos }}</td>
+                        <td v-if="venta.metodoPago === 'ef'">{{ venta.total }} Efectivo</td>
+                        <td v-if="venta.metodoPago === 'nq'">{{ venta.total }} Nequi</td>
+                        <td v-if="venta.metodoPago === 'qr'">{{ venta.total }} QR bancolombia</td>
+                        <td v-if="venta.metodoPago === 'pt'">{{ venta.total }} Puntos</td>
+                        <td v-if="venta.metodoPago === 'dv'">{{ venta.total }} Davivienda</td>
+                    </tr>
+                    <tr v-if="colorVenta(venta.items) === 'mx'" style="vertical-align: middle; background-color: lightgreen;" v-on:click="seleccionado(venta)">
+                        <td>{{ venta.fecha }}</td>
+                        <td>{{ venta.hora }}</td>
+                        <td>{{ venta.barbero }}</td>
+                        <td>{{ venta.cliente.nombres }} {{ venta.cliente.apellidos }}</td>
+                        <td v-if="venta.metodoPago === 'ef'">{{ venta.total }} Efectivo</td>
+                        <td v-if="venta.metodoPago === 'nq'">{{ venta.total }} Nequi</td>
+                        <td v-if="venta.metodoPago === 'qr'">{{ venta.total }} QR bancolombia</td>
+                        <td v-if="venta.metodoPago === 'pt'">{{ venta.total }} Puntos</td>
+                        <td v-if="venta.metodoPago === 'dv'">{{ venta.total }} Davivienda</td>
                     </tr>
                 </tbody>
             </table>
@@ -196,6 +221,30 @@ export default{
             this.computedMaxWidth = `${containerWidth}px`;
             // console.log(`${containerWidth}px`);
         },
+        colorVenta(items){
+            var productos = false;
+            var servicios = false;
+
+            for(var i in items){
+                if(items[i].identificador === "sv"){
+                    servicios = true;
+                }
+                if(items[i].identificador === "pr"){
+                    productos = true;
+                }
+                if(servicios === true && productos === true){
+                    return "mx"
+                }
+            }
+
+            
+            if(servicios === true){
+                return "sv";
+            }
+            else{
+                return "pr"
+            }
+        },
         recargar(){
             this.filtro = "";
             this.$swal({
@@ -244,6 +293,10 @@ export default{
             }
         },
         seleccionado(item){
+            var lista = ""
+            for(var i in item.items){
+                lista += " - "+item.items[i].producto
+            }
             if(this.store.state.user.rol === "caja"){
                 this.$swal({
                     title: "Datos de la venta",
@@ -269,6 +322,12 @@ export default{
                                 <div class="m-0">
                                     <p class="border-bottom fst-italic m-0 fw-bolder">Total</p>
                                     <p class="my-1">` + item.total + `</p>
+                                </div>
+                            </div>
+                            <div class="d-flex flex-wrap justify-content-around mb-2 p-0">
+                                <div class="m-0">
+                                    <p class="border-bottom fst-italic m-0 fw-bolder">Lista</p>
+                                    <p class="my-1">` + lista + `</p>
                                 </div>
                             </div>
                         </div>
@@ -303,6 +362,12 @@ export default{
                                     <p class="my-1">` + item.total + `</p>
                                 </div>
                             </div>
+                            <div class="d-flex flex-wrap justify-content-around mb-2 p-0">
+                                <div class="m-0">
+                                    <p class="border-bottom fst-italic m-0 fw-bolder">Lista</p>
+                                    <p class="my-1">` + lista + `</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     `,
@@ -311,15 +376,16 @@ export default{
                     cancelButtonText: "Eliminar",
                     reverseButtons: true
                 }).then((result) => {
-                    this.$swal({
-                        allowEscapeKey: false,
-                        allowOutsideClick: false,
-                        width: auto,
-                        didOpen: () => {
-                            this.$swal.showLoading();
-                        }
-                    })
-                    if(result.isDismissed){
+                    // console.log(result);
+                    if(result.dismiss === "cancel"){
+                        this.$swal({
+                            allowEscapeKey: false,
+                            allowOutsideClick: false,
+                            width: auto,
+                            didOpen: () => {
+                                this.$swal.showLoading();
+                            }
+                        })
                         var venta = "("+item.fecha+")-("+item.hora+")("+item.cliente.documento+")";
                         firebase
                             .firestore()

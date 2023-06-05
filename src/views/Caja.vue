@@ -136,10 +136,14 @@
                                             </div>
                                         </div>
 
-                                        <div class="my-auto ms-5" 
+                                        <div class="my-auto ms-5 border rounded-3" 
                                         style="margin-right: 0%;">
-                                            <p class="my-0 fs-5 fst-italic fw-bolder">Puntos</p>
-                                            <p class="my-0 fs-5 fw-light">{{ item.puntos }}</p>
+                                            <p class="my-0 fs-5 fst-italic fw-bolder border-bottom">Cantidad</p>
+                                            <div class="d-flex justify-content-around">
+                                                <button class="p-0 border-0" v-on:click="restarProducto(item)"><i class="fa-solid fa-minus"></i></button>
+                                                {{ item.cantidadVenta }}
+                                                <button class="p-0 border-0" v-on:click="sumarProducto(item)"><i class="fa-solid fa-plus"></i></button>
+                                            </div>
                                         </div>
 
                                         <div class="my-auto d-flex">
@@ -217,7 +221,7 @@
         </div>
         
         <div v-else>
-            <div class="card mx-5" style="margin-top: 100px;">
+            <div class="card mx-3" style="margin-top: 100px;">
                 <div class="card-header">
                     <h1 class="text-center">Galfersh Barber</h1>
                     <button type="button" class="btn" v-on:click="recargar">
@@ -225,12 +229,162 @@
                     </button>
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title">Special title treatment</h5>
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                    <div class="d-flex flex-wrap">
+                        <div class="p-1 border mx-auto caja text-center my-1">
+                            <h6 class="border-bottom">Fecha</h6>
+                            <input 
+                            id="startDate" 
+                            class="form-control border-0 formato-inputs" 
+                            type="date" 
+                            maxlength="30"
+                            :style="{'width': '15rem'}"
+                            v-model="registroVenta.fecha"/>
+                        </div>
+
+                        <div class="p-1 border mx-auto caja text-center my-1" id="contenedor_barbero">
+                            <h6 class="border-bottom">Barbero</h6>
+                            <input type="text"
+                            id="barbero"
+                            class="form-control border-0 formato-inputs"
+                            maxlength="30"
+                            v-on:keyup="filtroEmpl"
+                            autocomplete="off"
+                            v-model="filtro.barbero"/>
+                            <div class="border contenedor_opciones hide" id="list_empleados">
+                                <p class="my-1 opciones rounded mx-2" 
+                                v-for="bar in empleados"
+                                v-on:click="selectEmple(bar)">{{ bar.nombres }} {{ bar.apellidos }}</p>
+                            </div>
+                            <!-- <select class="form-select border-0 formato-inputs"
+                             v-model="registroVenta.barbero">
+                                <option v-for="bar in empleados">{{ bar.nombres }} </option>
+                            </select> -->
+                        </div>
+
+                        <div class="p-1 border mx-auto caja text-center my-1" id="contenedor_cliente">
+                            <h6 class="border-bottom">Cliente</h6>
+                            <input type="text"
+                            id="cliente"
+                            class="form-control border-0 formato-inputs"
+                            maxlength="30"
+                            v-on:keyup="filtroClie"
+                            autocomplete="off"
+                            v-model="filtro.cliente"/>
+                            <div class="border contenedor_opciones hide" id="list_clientes">
+                                <p class="my-1 opciones rounded mx-2" 
+                                v-for="cli in clientes"
+                                v-on:click="selectCli(cli)">{{ cli.nombres }} {{ cli.apellidos }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-3 container shadow my-4">
+                        <h5 class="text-center mt-2">Carrito</h5>
+                        <div class="border mx-auto text-center my-1"
+                        style="border-radius: 5px;">
+                            <h6 class="border-bottom">Servicio o Producto</h6>
+                            <input type="text"
+                            id="SerPro"
+                            class="form-control border-0 formato-inputs"
+                            maxlength="30"
+                            v-on:keyup="filtroSerPro"
+                            autocomplete="off"
+                            v-model="filtro.item"/>
+                            <div class="contenedor_opciones hide" id="list_items">
+                                <p class="my-1 opciones rounded mx-2"
+                                v-for="item in items"
+                                v-on:click="selectSerPro(item)">
+                                    {{ item.producto }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center mt-2">
+                            <h6 class="m-0 text-end">Total:</h6>
+                            &nbsp;
+                            <p v-if="registroVenta.metodoPago !== 'pt'" class="text-end text-muted my-auto">${{ registroVenta.total }}</p>
+                            <p v-else class="text-end text-muted">{{ registroVenta.total }}</p>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <h6 class="m-0 text-end">Puntos:</h6>
+                            &nbsp;
+                            <p class="text-end text-muted my-auto">{{ registroVenta.puntos }}</p>
+                        </div>
+
+                        <div style="overflow: scroll;">
+                            <div v-if="carrito.length !== 0">
+                                <div v-for="item in carrito" class="card my-2">
+                                    <div class="card-header">
+                                        <h4 class="card-title">{{ item.producto }}</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center">
+                                            <p class="my-0 fst-italic fw-bolder">Total: </p>&nbsp;
+                                            <p class="my-0 fw-light">{{ item.PrecioV }}</p>
+                                        </div>
+
+                                        <div v-if="item.identificador === 'sv'" class="d-flex align-items-center">
+                                            <p class="my-0 fst-italic fw-bolder">Puntos: </p>&nbsp;
+                                            <p class="my-0 fw-light">{{ item.puntos }}</p>
+                                        </div>   
+                                        
+                                        <div v-if="item.identificador === 'pr'" class="mt-2 border rounded-3">
+                                            <p class="my-0 fst-italic fw-bolder border-bottom">Cantidad</p>
+                                            <div class="d-flex justify-content-around">
+                                                <button class="p-0 border-0" v-on:click="restarProducto(item)"><i class="fa-solid fa-minus"></i></button>
+                                                {{ item.cantidadVenta }}
+                                                <button class="p-0 border-0" v-on:click="sumarProducto(item)"><i class="fa-solid fa-plus"></i></button>
+                                            </div>
+                                        </div>
+
+                                        <button class="btn btn-primary mt-2" v-on:click="deleteSerPro(item.codigo)">Eliminar</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-else class="text-muted">No hay servicios o productos registrados</div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-wrap justify-content-around align-items-center">
+                        <div class="p-1 border caja">
+                            <h6 class="border-bottom">Método de Pago</h6>
+                            <select class="form-select border-0 formato-inputs"
+                            v-model="registroVenta.metodoPago"
+                            v-on:change="cambiarMetodoPago">
+                                <option value="ef">Efectivo</option>
+                                <option value="pt">Puntos</option>
+                                <option value="nq">Nequi</option>
+                                <option value="dv">Daviplata</option>
+                                <option value="qr">Qr Bancolombia</option>
+                            </select>
+                        </div>
+
+                        <div class="p-1 border mx-auto caja text-center my-1">
+                            <h6 class="border-bottom">Efectivo</h6>
+                            <div class="input-group">
+                                <span class="input-group-text border">$</span>
+                                <input type="text"
+                                v-on:keyup="formatoNum"
+                                class="form-control border formato-inputs"
+                                maxlength="15"
+                                :disabled="(registroVenta.metodoPago !== 'ef')"
+                                v-on:keypress.enter="calcular"
+                                v-model="filtro.efectivo" />
+                            </div>
+                        </div>
+
+                        <button type="button" style="height: 50px; width: 150px;"
+                        class="btn btn-success"
+                        v-on:click="calcular">
+                            <h6 class="my-auto">Registrar Venta</h6>
+                        </button>
+                    </div>
+
+                    
                 </div>
+
             </div>
-            <div class="card">
+            <div class="card mt-5">
                 <ul class="nav nav-pills nav-fill">
                     <li class="nav-item">
                         <a class="nav-link"
@@ -248,6 +402,7 @@
                          v-on:click="cambiarComponente(2)">Registrar Producto</a>
                     </li>
                 </ul>
+
                 <!-- <RegistroCliente /> -->
 
                 <VentasDia v-if="store.state.CajaInv === 0"/>
@@ -369,6 +524,7 @@ export default{
                                             }
                                             this.empleados = list;
                                             this.empleadosList = list;
+                                            console.log(this.empleados)
                                             this.$swal.close();
                                         
                                     });
@@ -385,6 +541,7 @@ export default{
         this.$nextTick(() => {
             window.addEventListener("resize", this.onResize);
         });
+        
         if (this.mostrar) {
             const barbero = document.getElementById("barbero");
             barbero.addEventListener("focusin", () => {
@@ -402,6 +559,13 @@ export default{
                 lista.classList.remove("hide");
             });
         }
+        // if(!this.pantallaGrande){
+        //     const barbero = document.getElementById("barbero_pp");
+        //     barbero.addEventListener("focusin", () => {
+        //         const lista = document.getElementById("list_empleados_pp");
+        //         lista.classList.remove("hide");
+        //     });
+        // }
         // const contenedor_barbero = document.getElementById("contenedor_barbero")
         // contenedor_barbero.addEventListener("focusout", () => {
         //     const lista = document.getElementById("list_empleados")
@@ -472,7 +636,12 @@ export default{
                 this.registroVenta.total = 0
                 this.registroVenta.puntos = 0
                 for(var i in this.carrito){
-                    this.registroVenta.total += parseInt(this.carrito[i].PrecioV.replaceAll(".", ""));
+                    if(this.carrito[i].identificador === "pr"){
+                        this.registroVenta.total += parseInt(this.carrito[i].PrecioV.replaceAll(".", "")) * parseInt(this.carrito[i].cantidadVenta);
+                    }
+                    else{
+                        this.registroVenta.total += parseInt(this.carrito[i].PrecioV.replaceAll(".", ""));
+                    }
                     if (!isNaN(parseInt(this.carrito[i].puntos))){
                         this.registroVenta.puntos += parseInt(this.carrito[i].puntos)
                     }
@@ -524,7 +693,32 @@ export default{
         },
         selectSerPro(SerPro) {
             this.filtro.item = SerPro.producto;
-            this.carrito.push(SerPro);
+            var producto = SerPro;
+            console.log(SerPro)
+
+            if(SerPro.identificador === "pr" && parseInt(SerPro.Cantidad) > 0){
+                for(var i in this.carrito){
+                    if(this.carrito[i].codigo === SerPro.codigo){
+                        this.$swal({
+                            icon: "error",
+                            title: SerPro.producto+" ya se encuentra en el carrito"
+                        });
+                        return;
+                    }
+                }
+                producto.cantidadVenta = 1;
+                this.carrito.push(producto);
+            }
+            else if(SerPro.identificador === "pr" && parseInt(SerPro.Cantidad) === 0){
+                this.$swal({
+                    icon: "error",
+                    title: SerPro.producto+" no se ecuentra disponible"
+                });
+                return;
+            }
+            else{
+                this.carrito.push(SerPro);
+            }
             if(this.registroVenta.metodoPago === "pt"){
                 for(var i in this.productosPuntos){
                     if(this.productosPuntos[i].codigo === SerPro.codigo){
@@ -543,28 +737,75 @@ export default{
             const lista = document.getElementById("list_items");
             lista.classList.add("hide");
         },
-        deleteSerPro(codigo) {
-            for (var i in this.carrito) {
-                if (this.carrito[i].codigo === codigo) {
-                    if(this.registroVenta.metodoPago === "pt"){
-                        for(var j in this.productosPuntos){
-                            if(this.productosPuntos[i].codigo === codigo){
-                                this.registroVenta.total -= parseInt(this.productosPuntos[i].puntos)
-                                break;
+        sumarProducto(item){
+            // console.log(item)
+            for(var i in this.itemsList){
+                if(this.itemsList[i].codigo === item.codigo){
+                    if((item.cantidadVenta+1) <= this.itemsList[i].Cantidad){
+                        if(this.registroVenta.metodoPago === "pt"){
+                            this.registroVenta.total += parseInt(this.itemsList[i].puntos)
+                        } else {
+                            this.registroVenta.total += parseInt(this.itemsList[i].PrecioV.replaceAll(".", ""))
+                            if(this.itemsList[i].puntos !== ""){
+                                this.registroVenta.puntos = parseInt(this.registroVenta.puntos) + parseInt(this.itemsList[i].puntos);
                             }
                         }
+                        item.cantidadVenta += 1;
                     }
-                    else{
-                        this.registroVenta.total -= parseInt(this.carrito[i].PrecioV.replaceAll(".", ""));
-                        if (!isNaN(parseInt(this.carrito[i].puntos))) {
-                            this.registroVenta.puntos -= parseInt(this.carrito[i].puntos);
-                        }
-                    }
-                    this.carrito.splice(i, 1);
-                    break;
+                    return;
                 }
             }
-            // this.registroVenta.total -= parseInt(SerPro.PrecioV.replaceAll(".",""))
+        },
+        restarProducto(item){
+            for(var i in this.itemsList){
+                if(this.itemsList[i].codigo === item.codigo){
+                    if((item.cantidadVenta-1) > 0){
+                        if(this.registroVenta.metodoPago === "pt"){
+                            this.registroVenta.total -= parseInt(this.itemsList[i].puntos)
+                        } else {
+                            this.registroVenta.total -= parseInt(this.itemsList[i].PrecioV.replaceAll(".", ""))
+                            if(this.itemsList[i].puntos !== ""){
+                                this.registroVenta.puntos = parseInt(this.registroVenta.puntos) - parseInt(this.itemsList[i].puntos);
+                            }
+                        }
+                        item.cantidadVenta -= 1;
+                    }
+                }
+            }
+        },
+        deleteSerPro(codigo) {
+            if(this.registroVenta.metodoPago === "pt"){
+                for(var i in this.productosPuntos){
+                    if(this.productosPuntos[i].codigo === codigo){
+                        this.registroVenta.total -= parseInt(this.productosPuntos[i].puntos);
+                        break;
+                    }
+                }
+                for(var i in this.carrito){
+                    if(this.carrito[i].codigo === codigo){
+                        this.carrito.splice(i, 1);
+                    }
+                }
+            }
+            else{
+                for(var i in this.carrito){
+                    if(this.carrito[i].codigo === codigo){
+                        if(this.carrito[i].identificador === "pr"){
+                            this.registroVenta.total -= parseInt(this.carrito[i].PrecioV.replaceAll(".", "")) * this.carrito[i].cantidadVenta;
+                            if(!isNaN(parseInt(this.carrito[i].puntos))){
+                                this.registroVenta.puntos -= parseInt(this.carrito[i].puntos) * this.carrito[i].cantidadVenta;
+                            }
+                        }
+                        else{
+                            this.registroVenta.total -= parseInt(this.carrito[i].PrecioV.replaceAll(".", ""));
+                            if(!isNaN(parseInt(this.carrito[i].puntos))){
+                                this.registroVenta.puntos -= parseInt(this.carrito[i].puntos);
+                            }
+                        }
+                        this.carrito.splice(i, 1);
+                    }
+                }
+            }
         },
         cambiarComponente(index){
             this.store.state.CajaInv = index
@@ -601,102 +842,24 @@ export default{
                             this.items = list;
                             this.itemsList = list;
                             this.carrito = [];
-                            this.registroVenta.total = 0
-                            this.registroVenta.puntos = 0
+                            this.registroVenta.total = 0;
+                            this.registroVenta.puntos = 0;
+                            this.registroVenta.cliente = null;
+                            this.filtro.item = "";
+                            this.filtro.cliente = "";
                             this.$swal.close();
                         })
                 })
-            // this.formatoFecha(this.registroVenta.fecha);
-            // firebase
-            //     .firestore()
-            //     .collection("items")
-            //     .get()
-            //     .then((result) => {
-            //         var list = [];
-            //         for (var i in result.docs) {
-            //             list.push(result.docs[i].data());
-            //         }
-            //         this.items = list;
-            //         this.itemsList = list;
-            //         firebase
-            //             .firestore()
-            //             .collection("clientes")
-            //             .get()
-            //             .then((result) => {
-            //                 var list = [];
-            //                 for (var i in result.docs) {
-            //                     list.push(result.docs[i].data().usuario);
-            //                 }
-            //                 this.clientes = list;
-            //                 this.clientesList = list;
-            //                 firebase
-            //                     .firestore()
-            //                     .collection("Puntos")
-            //                     .get()
-            //                     .then((result) => {
-            //                         var list = [];
-            //                         for (var i in result.docs) {
-            //                             list.push(result.docs[i].data());
-            //                         }
-            //                         this.productosPuntos = list;
-            //                         firebase
-            //                             .firestore()
-            //                             .collection("nomina")
-            //                             .get()
-            //                             .then((result) => {
-            //                                 var list = [];
-            //                                 for (var i in result.docs) {
-            //                                     if (result.docs[i].data().usuario.rol !== "caja") {
-            //                                         list.push(result.docs[i].data().usuario);
-            //                                     }
-            //                                 }
-            //                                 this.empleados = list;
-            //                                 this.empleadosList = list;
-            //                                 this.$swal.close();
-                                        
-            //                         });
-            //                 });
-            //         });
-            // });
-            
-            
-            
-            // this.mostrar = true;
         },
         calcular() {
             var errors = "";
             
             var productos = [];
-            var NoDisponibles = [];
             for(var i in this.carrito){
                 if(this.carrito[i].identificador === "pr"){
-                    var aux = false;
-                    for(var j in productos){
-                        if(productos[j].codigo === this.carrito[i].codigo){
-                            if(this.carrito[i].Cantidad < 1){
-                                NoDisponibles.push(this.carrito[i])
-                            }
-                            else{
-                                aux = true;
-                                this.carrito[i].Cantidad = (parseInt(this.carrito[i].Cantidad)-1)+"";
-                                productos[j].Cantidad = this.carrito[i].Cantidad;
-                                break;
-                            }
-                        }
-                    }
-                    if(!aux){
-                        if(this.carrito[i].Cantidad < 1){
-                            NoDisponibles.push(this.carrito[i])
-                        }
-                        else{
-                            this.carrito[i].Cantidad = (parseInt(this.carrito[i].Cantidad)-1)+"";
-                            productos.push(this.carrito[i])
-                        }
-                    }
+                    productos.push(this.carrito[i])
                 }
             }
-            // console.log(productos)
-            // console.log(NoDisponibles)
 
             var DiezPorsiento = false;
             var clienteDiezPorsiento = null;
@@ -713,12 +876,12 @@ export default{
             // clienteDiezPorsiento.puntos = this.registroVenta.cliente.puntos;
             // console.log(clienteDiezPorsiento);
 
-            for(var i in NoDisponibles){
-                errors += NoDisponibles[i].producto+"\n";
-            }
-            if(errors!==""){
-                errors += "Los productos anteriormente mencionados no estan disponibles";
-            }
+            // for(var i in NoDisponibles){
+            //     errors += NoDisponibles[i].producto+"\n";
+            // }
+            // if(errors!==""){
+            //     errors += "Los productos anteriormente mencionados no estan disponibles";
+            // }
 
             if (this.registroVenta.barbero === null || this.registroVenta.cliente === null || this.carrito.length === 0
                 || (this.registroVenta.metodoPago === "ef" && this.filtro.efectivo === "")) {
@@ -730,23 +893,16 @@ export default{
                     icon: "error",
                     title: errors
                 });
-                for(var i in productos){
-                    for(var j in this.carrito){
-                        if(this.carrito[j].codigo === productos[i].codigo){
-                            this.carrito[i].Cantidad = (parseInt(this.carrito[i].Cantidad)+1)+"";
-                        }
-                    }   
-                }
                 console.log(this.carrito)
             }
             else {
                 var lista = [];
                 for (var i in this.carrito) {
-                    var item = { codigo: this.carrito[i].codigo, producto: this.carrito[i].producto, PrecioV: this.carrito[i].PrecioV };
+                    var item = { codigo: this.carrito[i].codigo, producto: this.carrito[i].producto, PrecioV: this.carrito[i].PrecioV, identificador: this.carrito[i].identificador };
                     lista.push(item);
                 }
                 this.registroVenta.items = lista;
-                // console.log(this.registroVenta.items);
+
                 if (this.registroVenta.metodoPago === "pt") {
                     if(this.registroVenta.cliente.puntos < this.registroVenta.total){
                         this.$swal({
@@ -801,6 +957,7 @@ export default{
                                         this.$swal.showLoading();
                                     }
                                 })
+
                                 try{
                                     firebase
                                         .firestore()
@@ -817,6 +974,9 @@ export default{
                                                 .set({ usuario })
                                                 .then(() => {
                                                     for(var i in productos){
+                                                        productos[i].Cantidad = parseInt(productos[i].Cantidad) - productos[i].cantidadVenta
+                                                        delete productos[i].cantidadVenta
+                                                        
                                                         firebase
                                                             .firestore()
                                                             .collection("items")
@@ -853,16 +1013,11 @@ export default{
                                         text: error.message
                                     });
                                 }
-                            }else{
-                                for(var i in this.carrito){
-                                    if(this.carrito[i].identificador === "pr"){
-                                        this.carrito[i].Cantidad = (parseInt(this.carrito[i].Cantidad)+1)+"";
-                                    }   
-                                }
                             }
                         })
                     }
                 }
+
                 else if (this.registroVenta.metodoPago === "ef") {
                     if (this.filtro.efectivo >= this.registroVenta.total) {
                         var vueltas = this.filtro.efectivo - this.registroVenta.total;
@@ -918,6 +1073,7 @@ export default{
                                         this.$swal.showLoading();
                                     }
                                 });
+                                
                                 try {
                                     firebase
                                         .firestore()
@@ -943,6 +1099,9 @@ export default{
                                                 .set({ usuario })
                                                 .then(() => {
                                                     for(var i in productos){
+                                                        productos[i].Cantidad = parseInt(productos[i].Cantidad) - productos[i].cantidadVenta;
+                                                        delete productos[i].cantidadVenta;
+
                                                         firebase
                                                             .firestore()
                                                             .collection("items")
@@ -993,13 +1152,6 @@ export default{
                                     });
                                 }
                             }
-                            else{
-                                for(var i in this.carrito){
-                                    if(this.carrito[i].identificador === "pr"){
-                                        this.carrito[i].Cantidad = (parseInt(this.carrito[i].Cantidad)+1)+"";
-                                    }   
-                                }
-                            }
                         });
                     }
                     else {
@@ -1009,6 +1161,7 @@ export default{
                         });
                     }
                 }
+
                 else {
                     this.$swal({
                         icon: "question",
@@ -1071,7 +1224,8 @@ export default{
                                         usuario.puntos += (this.registroVenta.puntos);
                                     }
                                     if(DiezPorsiento){
-                                        clienteDiezPorsiento.puntos += usuario.puntos * 0.1; 
+                                        clienteDiezPorsiento.puntos += usuario.puntos * 0.1;
+                                        clienteDiezPorsiento.puntosReferidos += usuario.puntos * 0.1;
                                     }
                                     firebase
                                         .firestore()
@@ -1080,6 +1234,9 @@ export default{
                                         .set({ usuario })
                                         .then(() => {
                                             for(var i in productos){
+                                                productos[i].Cantidad = parseInt(productos[i].Cantidad) - productos[i].cantidadVenta;
+                                                delete productos[i].cantidadVenta;
+
                                                 firebase
                                                     .firestore()
                                                     .collection("items")
@@ -1094,7 +1251,7 @@ export default{
                                                     .firestore()
                                                     .collection("clientes")
                                                     .doc(clienteDiezPorsiento.documento)
-                                                    .set({clienteDiezPorsiento})
+                                                    .set({usuario})
                                                     .then(() => {
                                                         this.$swal.close();
                                                     })
@@ -1128,13 +1285,6 @@ export default{
                                     icon: "error",
                                     text: error.message
                                 });
-                            }
-                        }
-                        else{
-                            for(var i in this.carrito){
-                                if(this.carrito[i].identificador === "pr"){
-                                    this.carrito[i].Cantidad = (parseInt(this.carrito[i].Cantidad)+1)+"";
-                                }   
                             }
                         }
                     });

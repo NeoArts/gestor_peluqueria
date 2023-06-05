@@ -24,8 +24,20 @@
                         </th>
                         <th scope="col">
                             <div class="d-flex justify-content-between align-items-center">
-                                Cantidad del producto luego de la compra
+                                Cantidad
                                 <span v-on:click="aplicarSort(3)"><i class="fa-solid fa-arrow-down-1-9 icono"></i></span>
+                            </div>
+                        </th>
+                        <th scope="col">
+                            <div class="d-flex justify-content-between align-items-center">
+                                Precio Total
+                                <span v-on:click="aplicarSort(4)"><i class="fa-solid fa-arrow-down-1-9 icono"></i></span>
+                            </div>
+                        </th>
+                        <th scope="col">
+                            <div class="d-flex justify-content-between align-items-center">
+                                Precio Unitario
+                                <span v-on:click="aplicarSort(5)"><i class="fa-solid fa-arrow-down-1-9 icono"></i></span>
                             </div>
                         </th>
                     </tr>
@@ -35,14 +47,16 @@
                         <td>{{ compra.fecha }}</td>
                         <td>{{ compra.codigo }}</td>
                         <td>{{ compra.producto }}</td>
-                        <td>{{ compra.cantidadPosterior }}</td>
+                        <td>{{ compra.cantidadPosterior - compra.cantidadAnterior }}</td>
+                        <td>{{ compra.precioTotal }}</td>
+                        <td>{{ compra.precioUnitario }}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
         <div v-if="resumenCompra.mostrarResumen">
             <div class="d-flex m-1">
-                <h2 class="mx-auto">Resumen de la Compra</h2>
+                <h2 class="mx-auto">Factura de la Compra</h2>
                 <span v-on:click="cerrarResumen" class="my-auto me-2"><i class="fa-solid fa-circle-xmark fa-lg"></i></span>
             </div>
             <!-- <div
@@ -52,42 +66,11 @@
             <img v-if="resumenCompra.imgCompra"
              class="imagePreviewWrapper border" 
              style="margin-right: auto; 
-             margin-left: auto;" 
+             margin-left: auto;"
+             :style="[(pantallaGrande) ? 'width: 500px; height: 500px;' : 'width: 280px; height: 280px;']"
              :src=resumenCompra.imgCompra>
 
-            <div class="d-flex m-1 justify-content-around flex-wrap">
-                <div class="p-1 border mx-auto caja text-center my-1">
-                    <h6 class="border-bottom">Producto</h6>
-                    <input type="text"
-                     class="form-control-plaintext border-0 formato-inputs"
-                     readonly
-                     v-model="resumenCompra.compra.producto" />
-                </div>
-
-                <div class="p-1 border mx-auto caja text-center my-1">
-                    <h6 class="border-bottom">Código</h6>
-                    <input type="text"
-                     class="form-control-plaintext border-0 formato-inputs"
-                     readonly
-                     v-model="resumenCompra.compra.codigo" />
-                </div>
-
-                <div class="p-1 border mx-auto caja text-center my-1">
-                    <h6 class="border-bottom">Precio Unitario</h6>
-                    <input type="text"
-                     class="form-control-plaintext border-0 formato-inputs"
-                     readonly
-                     v-model="resumenCompra.compra.precio" />
-                </div>
-
-                <div class="p-1 border mx-auto caja text-center my-1">
-                    <h6 class="border-bottom">Fecha</h6>
-                    <input type="date"
-                     class="form-control-plaintext border-0 formato-inputs"
-                     readonly
-                     v-model="resumenCompra.compra.fecha" />
-                </div>
-            </div>
+            
         </div>
     </div>
 </template>
@@ -102,6 +85,7 @@ export default{
         return{
             compras: [],
             computedMaxWidth: null,
+            pantallaGrande: ((window.innerWidth<1000) ? false : true),
             resumenCompra: {
                 mostrarResumen: false,
                 compra: null,
@@ -143,6 +127,7 @@ export default{
     methods:{
         calculateMaxWidth(){
             const containerWidth = window.outerWidth - 40;
+            this.pantallaGrande = ((window.innerWidth<1000) ? false : true)
 
             this.computedMaxWidth = `${containerWidth}px`;
         },

@@ -18,10 +18,11 @@
          type="file"
          class="invisible"
          @input="pickFile"
+         style="width: 250px;"
          accept="image/*"/>
     </div>
-    <div class="d-flex m-3 justify-content-around flex-wrap">
-        <div class="p-1 border mx-auto caja text-center my-1"
+    <div class="d-flex justify-content-around flex-wrap">
+        <div class="p-1 border caja text-center my-1"
          style="width: 250px; border-radius: 5px;">
             <h6 class="border-bottom">Productos</h6>
             <input type="text"
@@ -39,7 +40,7 @@
             </div>
         </div>
 
-        <div class="p-1 border mx-auto caja text-center my-1">
+        <div class="p-1 border caja text-center my-1">
             <h6 class="border-bottom">Cantidad</h6>
             <input type="text"
              v-on:keyup="formatoNum(0)"
@@ -48,8 +49,8 @@
              v-model="cantidad" />
         </div>
 
-        <div class="p-1 border mx-auto caja text-center my-1">
-            <h6 class="border-bottom">Precio de Compra</h6>
+        <div class="p-1 border caja text-center my-1">
+            <h6 class="border-bottom">Precio Unitario de Compra</h6>
             <div class="input-group">
                 <span class="input-group-text border">$</span>
                 <input type="text"
@@ -57,6 +58,18 @@
                  class="form-control border formato-inputs"
                  maxlength="8"
                  v-model="precio" />
+            </div>
+        </div>
+
+        <div class="p-1 border caja text-center my-1">
+            <h6 class="border-bottom">Precio Total de Compra</h6>
+            <div class="input-group">
+                <span class="input-group-text border">$</span>
+                <input type="text"
+                 v-on:keyup="formatoNum(2)"
+                 class="form-control border formato-inputs"
+                 maxlength="8"
+                 v-model="precioTotal" />
             </div>
         </div>
     </div>
@@ -116,6 +129,7 @@ export default{
             producto: null,
             cantidad: "",
             precio: "",
+            precioTotal: "",
             previewImage: null,
             image: null,
         }
@@ -161,6 +175,20 @@ export default{
                     this.precio = this.precio.replace(/[^\d\.]*/g,'');
                 }
             }
+            if(index === 2){
+                var num = this.precioTotal.replace(/\./g, "");
+                if(!isNaN(num)){
+                    num = num.toString().split('').reverse().join('').replace(/(?=\d*\.?)(\d{3})/g,'$1.');
+                    num = num.split('').reverse().join('').replace(/^[\.]/,'');
+                    this.precioTotal = num;
+                }else{
+                    this.$swal({
+                        icon: 'error',
+                        title: 'En este campo solo se permiten números'
+                    })
+                    this.precioTotal = this.precioTotal.replace(/[^\d\.]*/g,'');
+                }
+            }
             
         },
         selectImage(){
@@ -185,7 +213,7 @@ export default{
             if(this.previewImage === null){
                 errors = "No se detectó la imagen de la factura";
             }
-            if(this.producto === null || this.cantidad === "" || this.precio === ""){
+            if(this.producto === null || this.cantidad === "" || this.precio === "" || this.precioTotal === ""){
                 errors = "Se detectaron campos vacíos en el formulario";
             }
 
@@ -212,11 +240,12 @@ export default{
                 PrecioC = (PrecioC).toString().split('').reverse().join('').replace(/(?=\d*\.?)(\d{3})/g,'$1.');
                 PrecioC = PrecioC.split('').reverse().join('').replace(/^[\.]/,'');
                 
-                this.producto.PrecioC = PrecioC;
+                this.producto.PrecioC = this.precio;
                 var compra = {
                     codigo: this.producto.codigo,
                     producto: this.producto.producto,
-                    precio: this.precio,
+                    precioUnitario: this.precio,
+                    precioTotal: this.precioTotal,
                     cantidadAnterior: cantidad,
                     cantidadPosterior: this.producto.Cantidad,
                     fecha: new Date().toLocaleDateString("fr-CA"),
@@ -248,6 +277,7 @@ export default{
                                             this.producto= null;
                                             this.cantidad= "";
                                             this.precio = "";
+                                            this.precioTotal = "";
                                             this.previewImage= null;
                                             this.image= null;
                                         })
