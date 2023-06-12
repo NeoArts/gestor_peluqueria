@@ -42,7 +42,29 @@
                     </tr>
                 </thead>
                 <tbody v-for="item in items">
-                    <tr style="vertical-align: middle;">
+                    <tr style="vertical-align: middle; background-color: rgb(162, 225, 98);" v-if="item.Cantidad > 10">
+                        <th scope="row">{{ item.codigo }}</th>
+                        <td>{{ item.producto }}</td>
+                        <td>{{ item.Cantidad }}</td>
+                        <td>{{ item.PrecioV }}</td>
+                        <td v-if="store.state.user.rol !== 'caja'"><button class="p-0 border-0" v-on:click="edit(item)"><i class="fa-solid fa-pen-to-square"></i></button></td>
+                        <td class="d-flex border-0 flex-wrap justify-content-around">
+                            <button class="p-0 border-0" v-on:click="masProducto(item)"><i class="fa-solid fa-plus"></i></button>
+                            <button class="p-0 border-0" v-on:click="menosProducto(item)"><i class="fa-solid fa-minus"></i></button>
+                        </td>
+                    </tr>
+                    <tr style="vertical-align: middle; background-color: rgb(225, 98, 98);" v-if="item.Cantidad <= 3">
+                        <th scope="row">{{ item.codigo }}</th>
+                        <td>{{ item.producto }}</td>
+                        <td>{{ item.Cantidad }}</td>
+                        <td>{{ item.PrecioV }}</td>
+                        <td v-if="store.state.user.rol !== 'caja'"><button class="p-0 border-0" v-on:click="edit(item)"><i class="fa-solid fa-pen-to-square"></i></button></td>
+                        <td class="d-flex border-0 flex-wrap justify-content-around">
+                            <button class="p-0 border-0" v-on:click="masProducto(item)"><i class="fa-solid fa-plus"></i></button>
+                            <button class="p-0 border-0" v-on:click="menosProducto(item)"><i class="fa-solid fa-minus"></i></button>
+                        </td>
+                    </tr>
+                    <tr style="vertical-align: middle; background-color: rgb(239, 132, 99);" v-if="item.Cantidad > 3 && item.Cantidad < 10">
                         <th scope="row">{{ item.codigo }}</th>
                         <td>{{ item.producto }}</td>
                         <td>{{ item.Cantidad }}</td>
@@ -258,6 +280,9 @@ export default{
 
 <style>
 button{
-    background-color: white;
+    background-color: transparent;
+}
+button:hover{
+    background-color: rgb(89, 89, 89);
 }
 </style>

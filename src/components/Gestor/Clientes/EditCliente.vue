@@ -66,11 +66,20 @@
             </div>
             <div class="d-flex flex-wrap mb-3">
                 <div class="p-1 border mx-auto caja text-center my-1">
-                    <h6 class="border-bottom">puntos</h6>
+                    <h6 class="border-bottom">Puntos Personales</h6>
                     <input type="text"
                     class="form-control border-0 formato-inputs"
                     maxlength="4"
-                    v-model="cliente.puntos" 
+                    v-model="puntosPersonales" 
+                    v-on:keyup="format(4)" />
+                </div>
+
+                <div class="p-1 border mx-auto caja text-center my-1">
+                    <h6 class="border-bottom">Puntos Referidos</h6>
+                    <input type="text"
+                    class="form-control border-0 formato-inputs"
+                    maxlength="4"
+                    v-model="cliente.puntosReferidos" 
                     v-on:keyup="format(4)" />
                 </div>
 
@@ -81,7 +90,8 @@
                      id="startDate"
                      v-model="cliente.fechaNacimiento"/>
                 </div>
-
+            </div>
+            <div class="d-flex flex-wrap mb-3">
                 <div class="p-1 border mx-auto caja text-center my-1" :style="[pantallaGrande ? 'width: 300px;' : '']">
                     <h6 class="border-bottom">correo</h6>
                     <input type="text"
@@ -111,8 +121,9 @@ import firebase from 'firebase';
 export default{
     beforeMount(){
         // console.log(this.store.state.cliEdit)
-        this.cliente = this.store.state.cliEdit
-        this.filtro = this.store.state.cliEdit.CodAfiliado
+        this.cliente = this.store.state.cliEdit;
+        this.puntosPersonales = this.cliente.puntos - this.cliente.puntosReferidos;
+        this.filtro = this.store.state.cliEdit.CodAfiliado;
         // console.log(this.cliente)
         this.$swal({
             allowEscapeKey: false,
@@ -143,6 +154,7 @@ export default{
     data(){
         return{
             cliente: null,
+            puntosPersonales: null,
             pantallaGrande: ((window.innerWidth<1000) ? false : true),
             filtro: "",
             clientes: [],
@@ -271,6 +283,14 @@ export default{
                     }
                 })
 
+                if(this.cliente.puntosReferidos === ""){
+                    this.cliente.puntosReferidos = 0;
+                }
+                if(this.puntosPersonales === ""){
+                    this.puntosPersonales = 0;
+                }
+                this.cliente.puntos = parseInt(this.puntosPersonales) + parseInt(this.cliente.puntosReferidos)
+                // console.log(this.cliente.puntos)
                 this.registrarUsuario(this.cliente)
             }
         },

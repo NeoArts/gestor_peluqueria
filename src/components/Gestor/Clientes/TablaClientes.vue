@@ -1,83 +1,52 @@
 <template>
-    <div v-if="pantallaGrande">
-        <div class="d-flex mb-4">
-            <input type="text" 
-             class="form-control ms-5 me-2" 
-             :style="{width: '350px'}"
-             v-model="filtro"
-             v-on:keyup="SoloLetras"
-             maxlength="50"/>
-            <p class="my-auto fw-bold">Ingresa el nombre del Cliente</p>
-        </div>
-        <div class="table-responsive" v-if="mostrar" :style="{maxHeight: '250px'}">
-            <table class="table table-bordered table-hover" >
-                <thead>
-                    <tr class="table-dark">
-                        <th scope="col">
-                            <div class="d-flex justify-content-between align-items-center">
-                                Documento 
-                                <span v-on:click="aplicarSort(0)"><i class="fa-solid fa-arrow-down-a-z icono"></i></span>
-                            </div>
-                        </th>
-                        <th scope="col">
-                            <div class="d-flex justify-content-between align-items-center">
-                                Nombre
-                                <span v-on:click="aplicarSort(1)"><i class="fa-solid fa-arrow-down-a-z icono"></i></span>
-                            </div>
-                        </th>
-                        <th scope="col">
-                            <div class="d-flex justify-content-between align-items-center">
-                                Fecha de nacimiento
-                                <span v-on:click="aplicarSort(2)"><i class="fa-solid fa-arrow-down-1-9 icono"></i></span>
-                            </div>
-                        </th>
-                        <th scope="col">
-                            <div class="d-flex justify-content-between align-items-center">
-                                Puntos de Referido
-                                <span v-on:click="aplicarSort(3)"><i class="fa-solid fa-arrow-down-a-z icono"></i></span>
-                            </div>
-                        </th>
-                        <th scope="col"></th>
-                    </tr>
-                </thead>
-                <tbody v-for="cliente in clientes">
-                    <tr style="vertical-align: middle;">
-                        <th scope="row">{{ cliente.documento }}</th>
-                        <td>{{ cliente.nombres }} {{ cliente.apellidos }}</td>
-                        <td>{{ cliente.fechaNacimiento }}</td>
-                        <td>{{ cliente.puntosReferidos }}</td>
-                        <td>
-                            <button class="p-0 border-0" v-on:click="editar(cliente)">
-                                <i class="fa-solid fa-user-pen icono" ></i>
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+
+    <div class="d-flex mb-4 flex-wrap mx-1">
+        <p class="my-auto fw-bold">Ingresa el nombre o documento del Cliente</p>
+        <input type="text" 
+         class="form-control" 
+         v-model="filtro"
+         v-on:keyup="SoloLetras"
+         maxlength="50"/>
     </div>
-    <div v-else>
-        <div class="d-flex mb-4 align-items-center">
-            <input type="text" 
-            class="form-control ms-1 me-2" 
-            :style="{height: '30px'}"
-            v-model="filtro"
-            v-on:keyup="SoloLetras"
-            maxlength="50"/>
-            <p class="my-auto fw-bold">Cliente</p>
-        </div>
-        <div class="card mx-3 my-2" v-for="cliente in clientes">
-  <!-- <img src="..." class="card-img-top" alt="..."> -->
-            <div class="card-header">
-                <h4 class="card-title">{{ cliente.nombres }} {{ cliente.apellidos }}</h4>
-            </div>
-            <div class="card-body">
-                <h6 class="card-title">{{ cliente.documento }}</h6>
-                <p class="card-text mb-0"> Edad: {{ cliente.edad }}</p>
-                <p class="card-text mt-0"> Correo: {{ cliente.correo }}</p>
-                <button class="btn btn-primary" v-on:click="editar(cliente)">Editar &nbsp; <i class="fa-solid fa-user-pen icono" style="color: white;"></i></button>
-            </div>
-        </div>
+    <div class="table-responsive" v-if="mostrar" :style="{maxHeight: '250px', maxWidth: computedMaxWidth}">
+        <table class="table table-bordered table-hover" >
+            <thead>
+                <tr class="table-dark">
+                    <th scope="col">
+                        <div class="d-flex justify-content-between align-items-center">
+                            Documento 
+                            <span v-on:click="aplicarSort(0)"><i class="fa-solid fa-arrow-down-a-z icono"></i></span>
+                        </div>
+                    </th>
+                    <th scope="col">
+                        <div class="d-flex justify-content-between align-items-center">
+                            Nombre
+                            <span v-on:click="aplicarSort(1)"><i class="fa-solid fa-arrow-down-a-z icono"></i></span>
+                        </div>
+                    </th>
+                    <th scope="col">
+                        <div class="d-flex justify-content-between align-items-center">
+                            Fecha de nacimiento
+                            <span v-on:click="aplicarSort(2)"><i class="fa-solid fa-arrow-down-1-9 icono"></i></span>
+                        </div>
+                    </th>
+                    <th scope="col">
+                        <div class="d-flex justify-content-between align-items-center">
+                            Puntos
+                            <span v-on:click="aplicarSort(3)"><i class="fa-solid fa-arrow-down-a-z icono"></i></span>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody v-for="cliente in clientes">
+                <tr style="vertical-align: middle;" v-on:click="seleccionado(cliente)">
+                    <th scope="row">{{ cliente.documento }}</th>
+                    <td>{{ cliente.nombres }} {{ cliente.apellidos }}</td>
+                    <td>{{ cliente.fechaNacimiento }}</td>
+                    <td>{{ cliente.puntos }}</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </template>
 
@@ -88,6 +57,7 @@ import firebase from 'firebase';
 
 export default{
     beforeMount(){
+        this.calculateMaxWidth();
         this.$swal({
             allowEscapeKey: false,
             allowOutsideClick: false,
@@ -116,6 +86,14 @@ export default{
             console.log(error)
         }
     },
+    mounted(){
+        this.$nextTick(() => {
+            window.addEventListener("resize", this.calculateMaxWidth);
+        });
+    },
+    beforeUnmount(){
+        window.removeEventListener('resize', this.calculateMaxWidth);
+    },
     data(){
         return{
             clientes: null,
@@ -124,30 +102,91 @@ export default{
             filtro: "",
             filtros: false,
             pantallaGrande: ((window.innerWidth<1000) ? false : true),
+            computedMaxWidth: null,
         }
     },
     methods: {
+        calculateMaxWidth() {
+            const containerWidth = window.outerWidth - 40;
+
+            this.computedMaxWidth = `${containerWidth}px`;
+        },
+        seleccionado(cliente){
+            var puntosPersonales = cliente.puntos - cliente.puntosReferidos;
+            var cumpleaños = cliente.fechaNacimiento.split("-")[1]+"/"+cliente.fechaNacimiento.split("-")[2];
+            // console.log(puntosPersonales);
+            if(this.store.state.user.rol === "admin"){
+                this.$swal({
+                    title: "Datos del cliente",
+                    html: `
+                    <div class="d-flex border flex-column bd-highlight mb-3">
+                        <div class="p-2 bd-highlight border">
+                            <div class="d-flex flex-wrap justify-content-around mb-2 p-0">
+                                <div class="m-0">
+                                    <p class="border-bottom fst-italic m-0 fw-bolder">Nombre</p>
+                                    <p class="my-1">` + cliente.nombres + ` `+ cliente.apellidos + `</p>
+                                </div>
+                                <div class="m-0">
+                                    <p class="border-bottom fst-italic m-0 fw-bolder">Documento</p>
+                                    <p class="my-1">` + cliente.documento +`</p>
+                                </div>
+                            </div>
+                            <div class="d-flex flex-wrap justify-content-around mb-2 p-0">
+                                <div class="m-0">
+                                    <p class="border-bottom fst-italic m-0 fw-bolder">Cumpleaños</p>
+                                    <p class="my-1">` + cumpleaños + `</p>
+                                </div>
+                                <div class="m-0">
+                                    <p class="border-bottom fst-italic m-0 fw-bolder">Telefono</p>
+                                    <p class="my-1">` + cliente.telefono +`</p>
+                                </div>
+                            </div>
+                            <div class="d-flex flex-wrap justify-content-around mb-2 p-0">
+                                <div class="m-0">
+                                    <p class="border-bottom fst-italic m-0 fw-bolder">Puntos Personales</p>
+                                    <p class="my-1">` + puntosPersonales + `</p>
+                                </div>
+                                <div class="m-0">
+                                    <p class="border-bottom fst-italic m-0 fw-bolder">Telefono</p>
+                                    <p class="my-1">` + cliente.puntosReferidos +`</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    `,
+                    showCancelButton: true,
+                    showDenyButton: true,
+                    confirmButtonText: "Visitas",
+                    cancelButtonText: "Editar",
+                    denyButtonText: "Confirmar",
+                    denyButtonColor: "#32a852",
+                    reverseButtons: true
+                }).then((result) => {
+                    if(result.dismiss === "cancel"){
+                        this.editar(cliente)
+                    }
+                    if(result.isConfirmed){
+                        this.store.state.CliComponents = 3
+                        // console.log(cliente.documento);
+                        this.store.state.cliEdit = cliente.documento
+                    }
+                })
+            }
+        },
         editar(usuario){
             this.store.state.CliComponents = 2
             this.store.state.cliEdit = usuario
             // console.log(usuario)
         },
         SoloLetras(){
-            var regex = new RegExp("^[A-Za-zñÑáéíóúÁÉÍÓÚ \s]*$");
-            if(regex.test(this.filtro)){
-                var list = []
-                for(var i in this.clientesAux){
-                    var nombres = this.clientesAux[i].nombres+" "+this.clientesAux[i].apellidos
-                    if(nombres.includes(this.filtro)){
-                        list.push(this.clientesAux[i])
-                    }
+            var list = []
+            for(var i in this.clientesAux){
+                var nombres = (this.clientesAux[i].nombres+" "+this.clientesAux[i].apellidos).toLowerCase()
+                if(nombres.includes(this.filtro) || this.clientesAux[i].documento.replaceAll(".", "").includes(this.filtro)){
+                    list.push(this.clientesAux[i])
                 }
-                this.clientes = list
             }
-            else{
-                this.filtro = this.filtro.replace(/[^\d\.]*/g,'');
-            }
-            
+            this.clientes = list
         },
         aplicarSort(index){
             if(index === 0){

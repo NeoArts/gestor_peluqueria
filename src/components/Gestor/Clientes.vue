@@ -1,7 +1,7 @@
 <template>
     <div class="contenedor_clientes border">
         <div class="d-flex justify-content-end m-3" v-if="isAdmin">
-            <button type="button" class="btn btn-success me-2"
+            <button type="button" class="btn btn-success me-2" v-if="store.state.CliComponents === 0"
              v-on:click="registrar">
                 <i class="fa-solid fa-plus"></i>
                 Registrar
@@ -19,6 +19,9 @@
         <div v-if="store.state.CliComponents === 2">
             <EditCliente />
         </div>
+        <div v-if="store.state.CliComponents === 3">
+            <VisitasCliente />
+        </div>
     </div>
 </template>
 
@@ -27,6 +30,7 @@ import { useStore } from 'vuex';
 import EditCliente from './Clientes/EditCliente.vue';
 import RegistroCliente from './Clientes/RegistroCliente.vue';
 import TablaClientes from './Clientes/TablaClientes.vue';
+import VisitasCliente from './Clientes/VisitasCliente.vue';
 
 export default{
     beforeMount(){
@@ -57,7 +61,8 @@ export default{
     components: {
         RegistroCliente,
         TablaClientes,
-        EditCliente
+        EditCliente,
+        VisitasCliente
     }
 }
 </script>

@@ -14,9 +14,9 @@
             </div>
 
             <div>
-                <div class="d-flex align-items-center"><div class="border" style="height: 13px; width: 13px; background-color: aqua;"></div>&nbsp; Servicios</div>
-                <div class="d-flex align-items-center"><div class="border" style="height: 13px; width: 13px; background-color: lightcoral;"></div>&nbsp; Productos</div>
-                <div class="d-flex align-items-center"><div class="border" style="height: 13px; width: 13px; background-color: lightgreen;"></div>&nbsp; Mixto</div>
+                <div class="d-flex align-items-center"><div class="border" style="height: 13px; width: 13px; background-color: rgb(255, 255, 255);"></div>&nbsp; Servicios</div>
+                <div class="d-flex align-items-center"><div class="border" style="height: 13px; width: 13px; background-color: rgb(192, 192, 192);"></div>&nbsp; Productos</div>
+                <div class="d-flex align-items-center"><div class="border" style="height: 13px; width: 13px; background-color: rgb(127, 127, 127);"></div>&nbsp; Mixto</div>
             </div>
 
             <button type="button" class="btn" v-on:click="recargar">
@@ -61,7 +61,7 @@
                     </tr>
                 </thead>
                 <tbody v-for="venta in ventas">
-                    <tr v-if="colorVenta(venta.items) === 'sv'" style="vertical-align: middle; background-color: aqua;" v-on:click="seleccionado(venta)">
+                    <tr v-if="colorVenta(venta.items) === 'sv'" style="vertical-align: middle; background-color: rgb(255, 255, 255);" v-on:click="seleccionado(venta)">
                         <td>{{ venta.fecha }}</td>
                         <td>{{ venta.hora }}</td>
                         <td>{{ venta.barbero }}</td>
@@ -72,7 +72,7 @@
                         <td v-if="venta.metodoPago === 'pt'">{{ venta.total }} Puntos</td>
                         <td v-if="venta.metodoPago === 'dv'">{{ venta.total }} Davivienda</td>
                     </tr>
-                    <tr v-if="colorVenta(venta.items) === 'pr'" style="vertical-align: middle; background-color: lightcoral;" v-on:click="seleccionado(venta)">
+                    <tr v-if="colorVenta(venta.items) === 'pr'" style="vertical-align: middle; background-color: rgb(192, 192, 192);" v-on:click="seleccionado(venta)">
                         <td>{{ venta.fecha }}</td>
                         <td>{{ venta.hora }}</td>
                         <td>{{ venta.barbero }}</td>
@@ -83,7 +83,7 @@
                         <td v-if="venta.metodoPago === 'pt'">{{ venta.total }} Puntos</td>
                         <td v-if="venta.metodoPago === 'dv'">{{ venta.total }} Davivienda</td>
                     </tr>
-                    <tr v-if="colorVenta(venta.items) === 'mx'" style="vertical-align: middle; background-color: lightgreen;" v-on:click="seleccionado(venta)">
+                    <tr v-if="colorVenta(venta.items) === 'mx'" style="vertical-align: middle; background-color: rgb(127, 127, 127);" v-on:click="seleccionado(venta)">
                         <td>{{ venta.fecha }}</td>
                         <td>{{ venta.hora }}</td>
                         <td>{{ venta.barbero }}</td>
@@ -139,8 +139,6 @@ export default{
             firebase
                 .firestore()
                 .collection("ventas")
-                    //.where("fecha", "==", (new Date().toLocaleDateString("fr-CA")))
-                    // .orderBy("hora", "asc")
                     .get()
                     .then((result) => {
                         var list = [];
@@ -154,39 +152,6 @@ export default{
                         this.$swal.close()
                 });
         }
-        // if(this.store.state.user.rol === "caja"){
-        //     firebase
-        //         .firestore()
-        //         .collection("ventas")
-        //             .where("fecha", "==", (new Date().toLocaleDateString("fr-CA")))
-        //             // .orderBy("hora", "asc")
-        //             .get()
-        //             .then((result) => {
-        //                 var list = [];
-        //                 for (var i in result.docs) {
-        //                     list.push(result.docs[i].data());
-        //                 }
-        //                 this.ventas = list;
-        //                 this.mostrar = true
-        //                 this.$swal.close()
-        //         });
-        // }
-        // else{
-        //     firebase
-        //         .firestore()
-        //         .collection("ventas")
-        //             // .orderBy("hora", "asc")
-        //         .get()
-        //         .then((result) => {
-        //             var list = [];
-        //             for (var i in result.docs) {
-        //                 list.push(result.docs[i].data());
-        //             }
-        //             this.ventas = list;
-        //             this.mostrar = true
-        //             this.$swal.close()
-        //     });
-        // }
         
     },
     mounted(){
